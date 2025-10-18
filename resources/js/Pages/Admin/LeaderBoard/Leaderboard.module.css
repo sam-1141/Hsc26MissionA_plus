@@ -1,0 +1,65 @@
+/* Custom styles for the leaderboard */
+.goldRow {
+    background-color: rgba(255, 215, 0, 0.1);
+    border-left: 4px solid gold;
+}
+
+.silverRow {
+    background-color: rgba(192, 192, 192, 0.1);
+    border-left: 4px solid silver;
+}
+
+.bronzeRow {
+    background-color: rgba(205, 127, 50, 0.1);
+    border-left: 4px solid #cd7f32;
+}
+
+.medalIcon {
+    width: 24px;
+    height: 24px;
+}
+
+.gold {
+    color: gold;
+}
+
+.silver {
+    color: silver;
+}
+
+.bronze {
+    color: #cd7f32;
+}
+
+/* Custom progress bar for top 3 */
+.progress-bar.bg-warning {
+    background-color: gold !important;
+}
+
+.progress-bar.bg-info {
+    background-color: silver !important;
+}
+
+.progress-bar.bg-success {
+    background-color: #cd7f32 !important;
+}
+
+/* Hover effects for table rows */
+.table-hover tbody tr:hover {
+    transform: translateX(2px);
+    transition: transform 0.2s ease;
+}
+
+/* Table leaderboard */
+.rank {
+    width: 15%;
+}
+.name {
+    width: 25%;
+}
+.score {
+    width: 20%;
+}
+.submit {
+    width: 15%;
+}
