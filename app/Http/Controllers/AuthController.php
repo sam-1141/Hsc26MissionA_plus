@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\ForgotPasswordOtpMail;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Hsc26MapRegistration;
 
 class AuthController extends Controller
 {
@@ -196,72 +197,74 @@ class AuthController extends Controller
 
     // function for login
     public function login(Request $req)
-    {
-        $req->validate([
-            'login' => 'string|required',
-            'password' => 'string|required',
-        ]);
+{
+    $req->validate([
+        'login' => 'required|string',   // mobile or email
+        'exam_roll' => 'required|string', // unique key
+    ]);
 
-        // Determine if the input is an email or mobile number
-        $loginField = filter_var($req->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+    $loginInput = $req->login;
 
-        $credential = [
-            $loginField => $req->login,
-            'password' => $req->password,
-        ];
+    // Determine if login is email or mobile
+    if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+        $loginField = 'email';
+    } else {
+        $loginField = 'mobile';
 
-        $user = User::where($loginField, $req->login)->first();
+        // Normalize mobile: remove non-digit characters
+        $mobile = preg_replace('/\D/', '', $loginInput);
 
-        // if (Auth::attempt($credential)) {
-        if ($user && password_verify($req->password, $user->password)) {
-            Auth::login($user);
-            $user = Auth::user();
-           
-            // check if the user's status is active
-            if ($user->status == 1) {
-                $token = $user->id;
-                $domain = '.' . implode('.', array_slice(explode('.', request()->getHost()), -2));
-
-
-                $cookie = cookie(
-                    'ft_roar',
-                    $token,
-                    60 * 24 * 7,
-                    '/',
-                    $domain,
-                    true,
-                    false,
-                    false,
-                    'lax'
-                );
-
-                $redirectUrl = session('redirect_url');
-                session()->forget('redirect_url');
-
-                if ($redirectUrl) {
-                    try {
-                        $decodedUrl = base64_decode($redirectUrl, true);
-                        if ($decodedUrl && filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
-                            return response('', 409)->header('X-Inertia-Location', $decodedUrl)->withCookie($cookie);
-                        }
-                    } catch (\Exception $e) {
-                        return redirect()->route('dashboard')->withCookie($cookie);
-                    }
-                }
-
-                $intended_redirect_url = session()->get('url.intended', route('dashboard'));
-                session(['url.intended' => route('dashboard')]);
-
-                return redirect($intended_redirect_url)->withCookie($cookie);
-            } else {
-                $forgetCookie = Cookie::forget('ft_roar');
-                Auth::logout();
-                return redirect()->route('auth.login')->with('error', 'Your account is deactivated. Please contact the administrator.')->withCookie($forgetCookie);
-            }
+        // Convert to 880XXXXXXXXXX format
+        if (strlen($mobile) === 11 && substr($mobile, 0, 1) === '0') {
+            $mobile = '88' . $mobile;
+        } elseif (strlen($mobile) === 10 && substr($mobile, 0, 1) === '1') {
+            $mobile = '880' . $mobile;
         }
 
-        return to_route('auth.login')->with('error', 'ইমেইল/মোবাইল বা পাসওয়ার্ড সঠিক নয়।');
+        $loginInput = $mobile;
     }
+
+    // Find user by mobile/email
+    $user = Hsc26MapRegistration::where($loginField, $loginInput)->first();
+
+    // DEBUG: log login inputs and DB value
+    \Log::info('Login attempt:', [
+        'request_input' => $req->login,
+        'normalized_input' => $loginInput,
+        'db_value' => $user ? $user->{$loginField} : 'Not found'
+    ]);
+
+    // DEBUG: log exam_roll values
+    \Log::info('Exam roll check:', [
+        'request_exam_roll' => $req->exam_roll,
+        'db_exam_roll' => $user ? $user->unique_key_hscmap26 : 'No user'
+    ]);
+
+    // Check if user exists and exam_roll matches (trim spaces to avoid mismatch)
+    if ($user && trim($user->unique_key_hscmap26) === trim($req->exam_roll)) {
+        $token = $user->unique_key_hscmap26;
+        $domain = '.' . implode('.', array_slice(explode('.', request()->getHost()), -2));
+
+        $cookie = cookie(
+            'ft_roar',
+            $token,
+            60, // 1 hour
+            '/',
+            $domain,
+            true,
+            false,
+            false,
+            'lax'
+        );
+
+        // Redirect to start exam (or dashboard)
+        return redirect()->route('auth.login')->withCookie($cookie);
+    }
+
+    // If no match, show error
+    return redirect()->route('auth.login')
+        ->with('error', 'ইমেইল/মোবাইল বা Exam Roll সঠিক নয়।');
+}
 
 
     // method for logout

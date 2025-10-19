@@ -9,5 +9,10 @@ return [
 
     'frontend' => [
         'frontend_url' => env('FRONTEND_URL', 'https://stage.fahadstutorial.com')
-    ]
+    ],
+    'core' => [
+        'auth' => [
+            'registration' => env('CORE_REGISTRATION_URL', 'https://default.example.com/register'),
+        ],
+    ],
 ];

@@ -110,9 +110,9 @@ function Registration({ flash, errors }) {
                 hsc26Mission: data.hsc26Mission
             },
             {
-                onSuccess: () => 
+                onSuccess: () =>
                     reset(),
-          
+
             });
         // const payload = {
         //     name: `${data.firstName} ${data.lastName}`.trim(),
@@ -217,7 +217,7 @@ function Registration({ flash, errors }) {
                             <input
                                 type="email"
                                 name="email"
-                                placeholder="তোমার ইমেইল লিখো"
+                                placeholder="example@gmail.com"
                                 value={data.email}
                                 onChange={handleChange}
                                 required
@@ -319,6 +319,7 @@ function Registration({ flash, errors }) {
 
 
                             {/* Mission 26 */}
+                            <p>তুমি কি এইচএসসি ২৬ মিশন এ+ সম্পর্কে জানো? </p>
                             <select
                                 name="hsc26Mission"
                                 value={data.hsc26Mission}
