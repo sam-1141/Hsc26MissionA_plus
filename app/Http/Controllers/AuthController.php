@@ -196,25 +196,22 @@ class AuthController extends Controller
     }
 
     // function for login
-    public function login(Request $req)
+  public function login(Request $req)
 {
     $req->validate([
-        'login' => 'required|string',   // mobile or email
-        'exam_roll' => 'required|string', // unique key
+        'login' => 'required|string',
+        'exam_roll' => 'required|string',
     ]);
 
     $loginInput = $req->login;
 
-    // Determine if login is email or mobile
+    // Detect email or mobile
     if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
         $loginField = 'email';
     } else {
         $loginField = 'mobile';
-
-        // Normalize mobile: remove non-digit characters
         $mobile = preg_replace('/\D/', '', $loginInput);
 
-        // Convert to 880XXXXXXXXXX format
         if (strlen($mobile) === 11 && substr($mobile, 0, 1) === '0') {
             $mobile = '88' . $mobile;
         } elseif (strlen($mobile) === 10 && substr($mobile, 0, 1) === '1') {
@@ -224,24 +221,21 @@ class AuthController extends Controller
         $loginInput = $mobile;
     }
 
-    // Find user by mobile/email
     $user = Hsc26MapRegistration::where($loginField, $loginInput)->first();
 
-    // DEBUG: log login inputs and DB value
-    \Log::info('Login attempt:', [
+    // Debug info
+    \Log::info('Login attempt', [
         'request_input' => $req->login,
         'normalized_input' => $loginInput,
-        'db_value' => $user ? $user->{$loginField} : 'Not found'
-    ]);
-
-    // DEBUG: log exam_roll values
-    \Log::info('Exam roll check:', [
+        'login_field' => $loginField,
+        'db_value' => $user ? $user->{$loginField} : 'Not found',
         'request_exam_roll' => $req->exam_roll,
         'db_exam_roll' => $user ? $user->unique_key_hscmap26 : 'No user'
     ]);
 
-    // Check if user exists and exam_roll matches (trim spaces to avoid mismatch)
+    // Verify exam roll
     if ($user && trim($user->unique_key_hscmap26) === trim($req->exam_roll)) {
+
         $token = $user->unique_key_hscmap26;
         $domain = '.' . implode('.', array_slice(explode('.', request()->getHost()), -2));
 
@@ -257,14 +251,20 @@ class AuthController extends Controller
             'lax'
         );
 
-        // Redirect to start exam (or dashboard)
-        return redirect()->route('auth.login')->withCookie($cookie);
+        // ✅ Inertia response with cookie
+        return Inertia::render('Student/LoginSuccess', [
+            'user' => [
+                'name' => $user->name,
+                'unique_key_hscmap26' => $user->unique_key_hscmap26,
+                'achieved_mark' => $user->achieved_mark,
+            ],
+        ])->toResponse($req)->withCookie($cookie);
     }
 
-    // If no match, show error
     return redirect()->route('auth.login')
         ->with('error', 'ইমেইল/মোবাইল বা Exam Roll সঠিক নয়।');
 }
+
 
 
     // method for logout
