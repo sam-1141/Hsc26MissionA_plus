@@ -300,7 +300,7 @@ function Registration({ flash, errors }) {
                             {/* কোর্স */}
 
                             <p>তুমি কোন কোর্সে ভর্তি হয়েছো?:</p>
-              <div className="grid grid-cols-3 gap-4 mb-6">
+<div className="flex flex-col items-start gap-4 mb-6">
   {coursesData.map((course) => {
     const isSelected = data.courseName.includes(course.id);
 
@@ -310,7 +310,7 @@ function Registration({ flash, errors }) {
         onClick={() => handleCheckboxChange(course.id)}
         className={`
           flex items-center justify-center border rounded-lg cursor-pointer
-          w-48 h-16 transition-all duration-200
+          w-full max-w-full h-16 transition-all duration-200
           ${isSelected ? "bg-blue-500 text-white border-blue-600 shadow-md scale-105" : "bg-white border-gray-300"}
           hover:bg-blue-100
         `}
@@ -323,8 +323,10 @@ function Registration({ flash, errors }) {
 
 
 
+
+
                             {/* Mission 26 */}
-                            <p>তুমি কি এইচএসসি ২৬ মিশন এ+ সম্পর্কে জানো? </p>
+                            <p>তুমি কি এইচএসসি ২৬ মিশন ddd এ+ ddসম্পর্কে জানো? </p>
                             <select
                                 name="hsc26Mission"
                                 value={data.hsc26Mission}
