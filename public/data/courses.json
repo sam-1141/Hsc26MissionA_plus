@@ -1,7 +1,7 @@
 [
-  { "id": 1, "name": "Science" },
-  { "id": 2, "name": "Arts" },
-  { "id": 3, "name": "Commerce" },
-  { "id": 4, "name": "Engineering" },
+  { "id": 1, "name": "Physics | Restart - HSC 2026" },
+  { "id": 2, "name": "Chemistry | Restart - HSC 2026" },
+  { "id": 3, "name": "Biology | Restart - HSC 2026" },
+  { "id": 4, "name": "Higher Math | Restart - HSC 2026" },
   { "id": 0, "name": "None" }
 ]

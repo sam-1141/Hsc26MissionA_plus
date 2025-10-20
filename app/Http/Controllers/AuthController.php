@@ -251,7 +251,7 @@ class AuthController extends Controller
             'lax'
         );
 
-        // ✅ Inertia response with cookie
+        
         return Inertia::render('Student/LoginSuccess', [
             'user' => [
                 'name' => $user->name,

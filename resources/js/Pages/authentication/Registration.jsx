@@ -167,10 +167,25 @@ function Registration({ flash, errors }) {
             <ToastContainer />
             <div className="login-wrapper">
                 <div className="login-left">
-                    <h2>ফাহাদ'স টিউটোরিয়াল-এ তোমাকে স্বাগতম</h2>
-                    <h1>HSC 2026 Mission A+</h1>
-                    <img src="/assets/images/auth.7b116a16.png" alt="Welcome" />
-                </div>
+  <h2>ফাহাদ'স টিউটোরিয়াল-এ তোমাকে স্বাগতম</h2>
+  <h1>HSC 2026 Mission A+</h1>
+  <img src="/assets/images/auth.7b116a16.png" alt="Welcome" />
+
+  {/* Button section */}
+  <div className="mt-6 text-center">
+    <p className="mb-2 text-gray-700">
+      <h2>পরীক্ষায় অংশগ্রহণের জন্য …</h2>
+    </p>
+    <a
+      href={route('auth.login')} // Laravel route helper via Ziggy
+      className="inline-block px-6 py-3 bg-blue-500 text-white font-medium rounded-lg shadow-md hover:bg-blue-600 transition-colors duration-200"
+    >
+      লগ ইন
+    </a>
+    <h2>করো</h2>
+  </div>
+</div>
+
 
                 <div className="login-form">
                     <div className="border border-primary p-4 rounded shadow">
@@ -285,36 +300,26 @@ function Registration({ flash, errors }) {
                             {/* কোর্স */}
 
                             <p>তুমি কোন কোর্সে ভর্তি হয়েছো?:</p>
-                            <div
-                                style={{
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                    gap: "10px",
-                                    marginBottom: "25px",
-                                }}
-                            >
-                                {coursesData.map((course) => (
-                                    <label
-                                        key={course.id}
-                                        style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: "6px",
-                                            border: "1px solid #ccc",
-                                            borderRadius: "4px",
-                                            padding: "6px 10px",
-                                            backgroundColor: data.courseName.includes(course.id) ? "#eef" : "#fff",
-                                        }}
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={data.courseName.includes(course.id)}
-                                            onChange={() => handleCheckboxChange(course.id)}
-                                        />
-                                        {course.name}
-                                    </label>
-                                ))}
-                            </div>
+              <div className="grid grid-cols-3 gap-4 mb-6">
+  {coursesData.map((course) => {
+    const isSelected = data.courseName.includes(course.id);
+
+    return (
+      <div
+        key={course.id}
+        onClick={() => handleCheckboxChange(course.id)}
+        className={`
+          flex items-center justify-center border rounded-lg cursor-pointer
+          w-48 h-16 transition-all duration-200
+          ${isSelected ? "bg-blue-500 text-white border-blue-600 shadow-md scale-105" : "bg-white border-gray-300"}
+          hover:bg-blue-100
+        `}
+      >
+        <span className="font-medium text-center">{course.name}</span>
+      </div>
+    );
+  })}
+</div>
 
 
 
@@ -371,11 +376,11 @@ function Registration({ flash, errors }) {
                             </button>
 
                             <hr />
-                            <div>
+                            {/* <div>
                                 সাইন আপ করার মাধ্যমে তুমি ফাহাদ'স টিউটোরিয়াল-এর{" "}
                                 <Link>শর্তাদি</Link> এবং{" "}
                                 <Link>প্রাইভেসি পলিসিতে</Link> সম্মতি দিচ্ছো
-                            </div>
+                            </div> */}
 
                             {/* <div className="signup-link">
                                 <span>

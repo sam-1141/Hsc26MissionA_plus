@@ -23,6 +23,9 @@ use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 
 Route::post('/register', [Hsc26MapRegistrationController::class, 'store'])
      ->name('execute.auth.hsc26mapregistration');
+Route::get('/', function () {
+    return redirect()->route('auth.registration.form');
+});
 
 
 Route::get('/forbidden', function () {
@@ -161,12 +164,12 @@ Route::get('/forbidden', function () {
 
 Route::controller(AuthController::class)->group(function () {
     // route for load login form
-    Route::get("/auth/login", "loadLoginForm")->name("auth.login");
+    Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
     Route::get('/logout', 'logout')->name('auth.logout');
     // route for load forgot passwordForm
     Route::get("/auth/forgot-password", "loadForgotPasswordForm")->name('auth.forgot.password');
     // route for load registration form
-    Route::get("/auth/registration", "loadRegistrationForm")->name("auth.registration.form");
+    Route::get("/HscMisssionA+/registration", "loadRegistrationForm")->name("auth.registration.form");
     // route for load verify otp form
     // Route::get("/verify/otp", "loadVerifyOtpForm")->name("load.otp.form");
     // // route for load forgot password otp form

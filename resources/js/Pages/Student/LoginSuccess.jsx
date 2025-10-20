@@ -1,51 +1,131 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Header from "./Header"; // 👈 adjust path based on your project structure
 
-const LoginSuccess = ({ user }) => {
-    const [fadeIn, setFadeIn] = useState(false);
+const Dashboard = ({ user, promptEvent, isAppInstalled, installApp }) => {
+  const [activeTab, setActiveTab] = useState("Dashboard");
 
-    useEffect(() => {
-        setFadeIn(true); // fade-in effect on mount
-    }, []);
+  const menuItems = [
+    { label: "Dashboard", icon: "🏠" },
+    { label: "Show Certificate", icon: "📜" },
+    { label: "Show Answer", icon: "🧾" },
+    { label: "Show Question", icon: "❓" },
+    { label: "Script", icon: "📘" },
+  ];
 
-    return (
-        <div className={`min-h-screen flex items-center justify-center bg-gray-50 p-4 transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="bg-white shadow-2xl rounded-3xl p-10 max-w-lg w-full text-center">
+  const renderContent = () => {
+    const { name, unique_key_hscmap26, achieved_mark } = user || {};
 
-                {/* Success Icon */}
-                <div className="flex justify-center mb-6">
-                    <div className="bg-green-100 rounded-full p-4">
-                        <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                </div>
-
-                {/* Title */}
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">Login Successful!</h1>
-
-                {/* User Name */}
-                <p className="text-gray-600 text-lg mb-6">
-                    Welcome back, <span className="font-semibold">{user.name}</span>.
+    switch (activeTab) {
+      case "Dashboard":
+        return (
+          <div className="bg-white shadow-lg rounded-2xl p-12 w-full max-w-md text-center border border-gray-100">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">
+              Student Dashboard
+            </h2>
+            <div className="space-y-6 text-left">
+              <div className="p-6 rounded-xl bg-gray-50 border border-gray-200">
+                <p className="text-sm uppercase text-gray-500 mb-1">Name</p>
+                <p className="text-2xl font-semibold text-gray-800">{name}</p>
+              </div>
+              <div className="p-6 rounded-xl bg-gray-50 border border-gray-200">
+                <p className="text-sm uppercase text-gray-500 mb-1">Unique Key</p>
+                <p className="text-2xl font-semibold text-indigo-600 tracking-wide">
+                  {unique_key_hscmap26}
                 </p>
-
-                {/* Achieved mark card */}
-                <div className="bg-gray-50 border-2 border-blue-300 p-8 rounded-2xl w-full shadow-md">
-                    <p className="text-gray-700 font-medium mb-2 text-lg tracking-wide">Your Exam Status</p>
-                    <p className="text-4xl font-extrabold text-blue-700 font-mono tracking-widest select-all">
-                        {user.achieved_mark ?? 0} Marks
-                    </p>
-                    <p className="text-sm text-gray-500 mt-2">
-                        {user.achieved_mark === null ? "Exam Absent" : "Exam completed"}
-                    </p>
-                </div>
-
-                {/* Note */}
-                <p className="text-gray-500 text-sm mt-8">
-                    Please save your details for future reference.
+              </div>
+              <div className="p-6 rounded-xl bg-gray-50 border border-gray-200">
+                <p className="text-sm uppercase text-gray-500 mb-1">Achieved Mark</p>
+                <p className="text-2xl font-semibold text-gray-800">
+                  {achieved_mark ?? "Not Available"}
                 </p>
+              </div>
             </div>
+          </div>
+        );
+
+      case "Show Certificate":
+        return (
+          <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              🎓 Your Certificate
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Certificate for <span className="font-semibold">{name}</span> <br />
+              (Key: <span className="text-indigo-600">{unique_key_hscmap26}</span>)
+            </p>
+            <button className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg text-sm shadow">
+              Download PDF
+            </button>
+          </div>
+        );
+
+      case "Show Answer":
+        return (
+          <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">🧾 Answers</h2>
+            <p className="text-gray-600">Your submitted answers will appear here.</p>
+          </div>
+        );
+
+      case "Show Question":
+        return (
+          <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">❓ Questions</h2>
+            <p className="text-gray-600">Questions from your last exam appear here.</p>
+          </div>
+        );
+
+      case "Script":
+        return (
+          <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center border border-gray-100">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">📘 Script</h2>
+            <p className="text-gray-600">
+              Your written exam scripts or files will be shown here.
+            </p>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-100 font-sans">
+      {/* ✅ Header at the top */}
+      <Header
+        promptEvent={promptEvent}
+        isAppInstalled={isAppInstalled}
+        installApp={installApp}
+      />
+
+      {/* ✅ Body below the header */}
+      <div className="flex flex-col items-center justify-start flex-grow pt-16">
+        {/* Top horizontal menu */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          {menuItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => setActiveTab(item.label)}
+              className={`flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-all duration-200 ${
+                activeTab === item.label
+                  ? "bg-indigo-600 text-white shadow-lg"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-indigo-50 hover:text-indigo-600"
+              }`}
+            >
+              <span className="text-lg">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
         </div>
-    );
+
+        {/* Main content */}
+        <main className="flex items-center justify-center w-full px-4">
+          {renderContent()}
+        </main>
+      </div>
+    </div>
+  );
 };
 
-export default LoginSuccess;
+export default Dashboard;
