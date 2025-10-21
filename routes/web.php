@@ -20,12 +20,19 @@ use App\Http\Controllers\MaterialsController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\Student\Hsc26MapRegistrationController;
+use Inertia\Inertia;
+
 
 Route::post('/register', [Hsc26MapRegistrationController::class, 'store'])
      ->name('execute.auth.hsc26mapregistration');
 Route::get('/', function () {
     return redirect()->route('auth.registration.form');
 });
+
+use App\Http\Controllers\ProgressController;
+
+Route::get('/progress/{student_id}', [ProgressController::class, 'getStudentProgress']);
+
 
 
 Route::get('/forbidden', function () {
@@ -161,10 +168,37 @@ Route::get('/forbidden', function () {
 
 //     });
 // });
+use App\Http\Controllers\CalculatorController;
+
+Route::get('/check-auth', function () {
+    return auth()->user();
+});
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/calculator', [CalculatorController::class, 'show'])->name('calculator.show');
+    Route::post('/calculator', [CalculatorController::class, 'calculate'])->name('calculator.calculate');
+});
+
+
+Route::middleware(['web'])->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get("/login", "loadLoginForm")->name("auth.login");
+        Route::get('/logout', 'logout')->name('auth.logout');
+        Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
+
+    });
+});
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard'); // assumes you have a React/Vue component at resources/js/Pages/Dashboard.jsx
+})->name('dashboard')->middleware('auth');
+
 
 Route::controller(AuthController::class)->group(function () {
     // route for load login form
-    Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
+    // Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
     Route::get('/logout', 'logout')->name('auth.logout');
     // route for load forgot passwordForm
     Route::get("/auth/forgot-password", "loadForgotPasswordForm")->name('auth.forgot.password');

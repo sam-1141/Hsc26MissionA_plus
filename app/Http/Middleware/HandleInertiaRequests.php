@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                 'form_type' => fn () => $request->session()->get('form_type'),
             ],
             'auth.user' => fn () => $request->user()
-                ? $request->user()->only('id', 'name', 'email','role','mobile','isVerified','institue','class','group')
+                ? $request->user()->only('id', 'name', 'email')
                 : null,
                 
         ]);
