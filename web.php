@@ -22,29 +22,25 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 use Inertia\Inertia;
 use App\Http\Controllers\ProgressController;
+// Route::middleware(['auth'])->get('/progress-json', [ProgressController::class, 'getStudentProgress']);
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
-});
-
-// Route::middleware(['auth'])->get('/check-auth', function () {
-//     dd(auth()->user(), Auth::id());
-// });
-
-Route::middleware(['auth'])->get('/check-auth', function () {
-    return response()->json(auth()->user(), 200, [
-        'Cache-Control' => 'no-cache, no-store, must-revalidate',
-        'Pragma' => 'no-cache',
-        'Expires' => '0',
-    ]);
+// Route::post('/register', [Hsc26MapRegistrationController::class, 'store'])
+//      ->name('execute.auth.hsc26mapregistration');
+Route::get('/', function () {
+    return redirect()->route('auth.login');
 });
 
 
 
 // Route::get('/progress/{student_id}', [ProgressController::class, 'getStudentProgress']);
-// Route::get('/progress', [ProgressController::class, 'getStudentProgress']);
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
+});
 
 
+// Route::middleware(['auth'])->get('/progress', [ProgressController::class, 'getStudentProgress'])
+//     ->name('progress.dashboard');
 Route::get('/lectures/{chapter}', [App\Http\Controllers\ChapterLectureController::class, 'getLectures']);
 
 Route::get('/forbidden', function () {
@@ -66,26 +62,28 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// Route::middleware(['web'])->group(function () {
-//     Route::controller(AuthController::class)->group(function () {
-//         // Route::get("/login", "loadLoginForm")->name("auth.login");
-//         Route::get('/logout', 'logout')->name('auth.logout');
-//         Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
+Route::middleware(['web'])->group(function () {
+    Route::controller(AuthController::class)->group(function () {
+        Route::get("/login", "loadLoginForm")->name("auth.login");
+        Route::get('/logout', 'logout')->name('auth.logout');
+        Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
 
-//     });
-// });
+    });
+});
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard'); 
+    return Inertia::render('Dashboard'); // assumes you have a React/Vue component at resources/js/Pages/Dashboard.jsx
 })->name('dashboard')->middleware('auth');
 
 
-Route::controller(AuthController::class)->group(function () {
+// Route::controller(AuthController::class)->group(function () {
+//     // route for load login form
+//     Route::get("auth/login", "loadLoginForm")->name("auth.login");
+//     Route::get('/logout', 'logout')->name('auth.logout');
 
-    Route::get("/login", "loadLoginForm")->name("auth.login");
-    Route::post("/login", "login")->name("execute.auth.login");
-    Route::get('/logout', 'logout')->name('auth.logout');
-    
-    
-   
-});
+
+//     // #=== Post Routes ===#
+//     // // route for login
+//     Route::post("/auth/login", "login")->name("auth.login");
+
+// });

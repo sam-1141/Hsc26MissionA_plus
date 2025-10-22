@@ -34,14 +34,15 @@ export default function Dashboard() {
                             📅 Study Progress
                         </h2>
                         <p className="text-gray-500 text-sm mt-2">
-                            দৈনন্দিন পড়াশোনার অগ্রগতি আর সাবজেক্টগুলো ট্র্যাক করো।
+                            প্রতিদিনের পড়াশোনার সম্পূর্ণ অগ্রগতি পর্যবেক্ষণ করো এবং তোমার সব বিষয়ভিত্তিক কার্যক্রম  ট্র্যাক রাখো।
                         </p>
-                        <button
-                            disabled
-                            className="mt-4 px-4 py-2 text-sm bg-gray-300 text-gray-600 rounded-lg cursor-not-allowed"
+                        <a
+                            href="/calculator"
+                            className="inline-block mt-4 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                         >
-                            Coming Soon
-                        </button>
+                            
+                            See Progress
+                        </a>
                     </div>
 
                     {/* Card 3 */}

@@ -187,78 +187,95 @@ class AuthController extends Controller
     }
 
     // function for login
-    public function login(Request $req)
+    public function login(Request $request)
     {
-        $req->validate([
-            'login' => 'string|required',
-            'password' => 'string|required',
+        $request->validate([
+            'login'    => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $loginField = filter_var($req->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+        $user = User::where($loginField, $request->login)->first();
 
-        $user = User::where($loginField, $req->login)->first();
-
-        if ($user && password_verify($req->password, $user->password)) {
-            if ($user->status != 1) {
-                Auth::logout();
-
-                return redirect()->route('auth.login')
-                    ->with('error', 'Your account is deactivated. Please contact the administrator.');
-            }
-
-            Auth::login($user);
-            $req->session()->regenerate(); // 🔒 good practice
-
-            // optional custom cookie (skip if not needed)
-            $token = $user->id;
-            $host = request()->getHost();
-            $domain = in_array($host, ['localhost', '127.0.0.1']) ? null : '.'.implode('.', array_slice(explode('.', $host), -2));
-            $secure = app()->environment('production');
-
-            $cookie = cookie(
-                'ft_roar',
-                $token,
-                60 * 24 * 7,
-                '/',
-                $domain,
-                $secure,   // only true in production
-                false,
-                false,
-                'lax'
-            );
-
-            $redirectUrl = session('redirect_url');
-            session()->forget('redirect_url');
-
-            if ($redirectUrl) {
-                try {
-                    $decodedUrl = base64_decode($redirectUrl, true);
-                    if ($decodedUrl && filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
-                        return response('', 409)
-                            ->header('X-Inertia-Location', $decodedUrl)
-                            ->withCookie($cookie);
-                    }
-                } catch (\Exception $e) {
-                    // ignore malformed redirect
-                }
-            }
-
-            $intended = session()->get('url.intended', route('dashboard'));
-            session(['url.intended' => route('dashboard')]);
-
-            return redirect($intended)->withCookie($cookie);
+        if (!$user || !password_verify($request->password, $user->password)) {
+            return redirect()->route('auth.login')
+                             ->with('error', 'ইমেইল/মোবাইল বা পাসওয়ার্ড সঠিক নয়।')
+                             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                             ->header('Pragma', 'no-cache')
+                             ->header('Expires', '0');
         }
 
-        return to_route('auth.login')->with('error', 'ইমেইল/মোবাইল বা পাসওয়ার্ড সঠিক নয়।');
+        if ($user->status != 1) {
+            Auth::logout();
+            return redirect()->route('auth.login')
+                             ->with('error', 'Your account is deactivated. Please contact the administrator.')
+                             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                             ->header('Pragma', 'no-cache')
+                             ->header('Expires', '0');
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate(); // prevent session fixation
+
+        // Setup secure, persistent cookie
+        $host = request()->getHost();
+        $domain = in_array($host, ['localhost', '127.0.0.1']) ? null : '.' . implode('.', array_slice(explode('.', $host), -2));
+        $secure = app()->environment('production');
+
+        $cookie = cookie(
+            'ft_roar',
+            $user->id,
+            60 * 24 * 7, // 7 days
+            '/',
+            $domain,
+            $secure,
+            true,   // HttpOnly for security
+            true,   // SameSite strict
+            'lax'
+        );
+
+        // Handle redirect_url safely
+        $redirectUrl = session()->pull('redirect_url');
+        if ($redirectUrl) {
+            $decodedUrl = base64_decode($redirectUrl, true);
+            if ($decodedUrl && filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
+                return response('', 409)
+                    ->header('X-Inertia-Location', $decodedUrl)
+                    ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                    ->header('Pragma', 'no-cache')
+                    ->header('Expires', '0')
+                    ->withCookie($cookie);
+            }
+        }
+
+        // Default intended route
+        $intended = session()->get('url.intended', route('dashboard'));
+        session(['url.intended' => route('dashboard')]);
+
+        return redirect($intended)
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0')
+            ->withCookie($cookie);
     }
 
-    // method for logout
-    public function logout(Request $req)
+    public function logout(Request $request)
     {
+        // Forget custom cookie
         $forgetCookie = Cookie::forget('ft_roar');
+
         Auth::logout();
 
-        return redirect()->route('auth.login')->withCookie($forgetCookie);
+        // Invalidate session & regenerate token
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        $request->session()->regenerate();
+
+        return redirect()->route('auth.login')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0')
+            ->withCookie($forgetCookie);
     }
 
     // method for verify otp

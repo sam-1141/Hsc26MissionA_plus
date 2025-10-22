@@ -135,17 +135,17 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                 {flash?.error && <div>{flash.error}</div>}
                             </div>
 
-                            <div className="forgot-password text-start mt-3">
+                            {/* <div className="forgot-password text-start mt-3">
                                 <Link href={route("auth.forgot.password")}>
                                     পাসওয়ার্ড ভুলে গিয়েছো?
                                 </Link>
-                            </div>
+                            </div> */}
 
                             <button type="submit" className="login-btn fw-bold mt-3">
                                 লগ ইন
                             </button>
 
-                            <p className="error-message fst-italic mt-3">
+                            {/* <p className="error-message fst-italic mt-3">
                                 পূনঃস্মরণ: তুমি যদি কখনো পাসওয়ার্ড সেট না করে
                                 থাকো, তাহলে তোমার পাসওয়ার্ড সেট করতে{" "}
                                 <span className="forgot-password">
@@ -154,16 +154,16 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                     </Link>
                                 </span>{" "}
                                 -তে ক্লিক করো
-                            </p>
+                            </p> */}
 
                             <hr />
 
-                            <div className="signup-link">
+                            {/* <div className="signup-link">
                                 <span>ফাহাদ'স টিউটোরিয়াল-এ নতুন?</span>
                                 <Link href={route("auth.registration.form")} className="fw-bold">
                                     সাইন আপ করো
                                 </Link>
-                            </div>
+                            </div> */}
                         </form>
                     </div>
                 </div>

@@ -22,7 +22,11 @@ const Head = ({ promptEvent, isAppInstalled, installApp }) => {
         >
             {/* Logo on the left */}
             <Menu.Item header style={{ padding: 0 }}>
-                <a href="https://ft.education/" target="_blank" rel="noopener noreferrer">
+                <a
+                    href="https://ft.education/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
                     <img
                         src={logo}
                         alt="App Logo"
@@ -34,10 +38,16 @@ const Head = ({ promptEvent, isAppInstalled, installApp }) => {
                 </a>
             </Menu.Item>
 
-            {/* Right side: Avatar + Welcome + Install button */}
+            {/* Right side: Avatar + Welcome + Install button + Logout */}
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                 {/* Avatar + Welcome */}
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                    }}
+                >
                     <div
                         style={{
                             width: "40px",
@@ -54,7 +64,10 @@ const Head = ({ promptEvent, isAppInstalled, installApp }) => {
                         {user?.name?.charAt(0) || "U"}
                     </div>
                     <div style={{ color: "white", fontWeight: "500" }}>
-                        Welcome, <span style={{ fontWeight: "700" }}>{user?.name || "User"}</span>
+                        Welcome,{" "}
+                        <span style={{ fontWeight: "700" }}>
+                            {user?.name || "User"}
+                        </span>
                     </div>
                 </div>
 
@@ -68,6 +81,18 @@ const Head = ({ promptEvent, isAppInstalled, installApp }) => {
                         onClick={installApp}
                     />
                 )}
+
+                {/* Logout Button */}
+                <Button
+                    color="red"
+                    basic
+                    compact
+                    content="Logout"
+                    style={{ marginLeft: "0.5rem" }}
+                    onClick={() =>
+                        (window.location.href = route("auth.logout"))
+                    }
+                />
             </div>
         </Menu>
     );

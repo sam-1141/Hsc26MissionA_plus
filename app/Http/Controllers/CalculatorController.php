@@ -86,11 +86,6 @@ class CalculatorController extends Controller
             }
         }
 
-        return back()->with([
-            'result' => [
-                'lectures' => $totalLectures,
-                'days' => $totalDays,
-            ],
-        ]);
+        return redirect()->route('student.progress');
     }
 }
