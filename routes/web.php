@@ -23,6 +23,11 @@ use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 use Inertia\Inertia;
 use App\Http\Controllers\ProgressController;
 
+Route::post('/fresh-start', [CalculatorController::class, 'freshStart'])
+    ->middleware(['auth'])
+    ->name('fresh-start');
+
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
 });

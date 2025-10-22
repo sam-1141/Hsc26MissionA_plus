@@ -37,7 +37,7 @@ export default function Dashboard() {
                             প্রতিদিনের পড়াশোনার সম্পূর্ণ অগ্রগতি পর্যবেক্ষণ করো এবং তোমার সব বিষয়ভিত্তিক কার্যক্রম  ট্র্যাক রাখো।
                         </p>
                         <a
-                            href="/calculator"
+                            href="/progress"
                             className="inline-block mt-4 px-4 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                         >
                             

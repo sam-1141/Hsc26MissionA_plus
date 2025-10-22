@@ -29,36 +29,36 @@ export default function ProgressDashboard({ progressData }) {
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="mb-6 flex items-center gap-2">
-    <Link
-        href="/dashboard"
-        className="flex items-center justify-center bg-white bg-opacity-90 text-gray-800 text-xl md:text-2xl px-5 py-3 rounded-full shadow-lg border border-transparent hover:bg-opacity-100 transition-all duration-300"
-    >
-        🏠
-    </Link>
-</div>
+                <Link
+                    href="/dashboard"
+                    className="flex items-center justify-center bg-white bg-opacity-90 text-gray-800 text-xl md:text-2xl px-5 py-3 rounded-full shadow-lg border border-transparent hover:bg-opacity-100 transition-all duration-300"
+                >
+                    🏠
+                </Link>
+            </div>
 
 
-            
+
             <h2 className="text-3xl font-bold text-center mb-8 text-indigo-700">
-  Student Progress Dashboard
-  <div className="mt-4 flex flex-wrap justify-center gap-4 text-lg">
-    <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-1">
-      Physics: 🪐⚡🔭
-    </span>
-    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-1">
-      Higher Math: ➗➕➖📐
-    </span>
-    <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full flex items-center gap-1">
-      Biology: 🧬🦠🌱
-    </span>
-    <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center gap-1">
-      Chemistry: ⚗️🧪🧫
-    </span>
-  </div>
-</h2>
+                Student Progress Dashboard
+                <div className="mt-4 flex flex-wrap justify-center gap-4 text-lg">
+                    <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-1">
+                        Physics: 🪐⚡🔭
+                    </span>
+                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-1">
+                        Higher Math: ➗➕➖📐
+                    </span>
+                    <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full flex items-center gap-1">
+                        Biology: 🧬🦠🌱
+                    </span>
+                    <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center gap-1">
+                        Chemistry: ⚗️🧪🧫
+                    </span>
+                </div>
+            </h2>
 
-            <br/>
-            
+            <br />
+
 
             {Object.entries(progressData.subjects).map(
                 ([subject, chapters]) => {
@@ -83,9 +83,9 @@ export default function ProgressDashboard({ progressData }) {
                                 />
                             </div>
                             <p className="text-xl md:text-2xl font-bold text-gray-800 mb-4 inline-block bg-white bg-opacity-90 px-5 py-3 rounded-full shadow-xl border border-gray-300">
-  Remaining Days: {Math.floor(remainingDays)}/
-  {chapters.reduce((sum, ch) => sum + ch.duration_days, 0)}
-</p>
+                                Remaining Days: {Math.floor(remainingDays)}/
+                                {chapters.reduce((sum, ch) => sum + ch.duration_days, 0)}
+                            </p>
 
 
 

@@ -88,4 +88,33 @@ class CalculatorController extends Controller
 
         return redirect()->route('student.progress');
     }
+
+    public function freshStart()
+    {
+        $studentId = Auth::id();
+
+        if (!$studentId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access. Please log in first.'
+            ], 401);
+        }
+
+        $existing = Progresses::where('student_id', $studentId)->count();
+
+        if ($existing > 0) {
+            $deleted = Progresses::where('student_id', $studentId)->delete();
+            \Log::info('Fresh start: deleted progress', [
+                'student_id' => $studentId,
+                'deleted_records' => $deleted,
+            ]);
+        } else {
+            \Log::info('Fresh start: no records found', ['student_id' => $studentId]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Progress successfully cleared.',
+        ]);
+    }
 }
