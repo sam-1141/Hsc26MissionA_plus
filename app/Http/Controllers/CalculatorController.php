@@ -93,11 +93,11 @@ class CalculatorController extends Controller
     {
         $studentId = Auth::id();
 
-        if (!$studentId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized access. Please log in first.'
-            ], 401);
+        if (! $studentId) {
+            return back()->with([
+                'type' => 'error',
+                'message' => 'Unauthorized access. Please log in first.',
+            ]);
         }
 
         $existing = Progresses::where('student_id', $studentId)->count();
@@ -112,8 +112,9 @@ class CalculatorController extends Controller
             \Log::info('Fresh start: no records found', ['student_id' => $studentId]);
         }
 
-        return response()->json([
-            'success' => true,
+        // ✅ Instead of JSON, redirect back with a flash message (works best with Inertia)
+        return back()->with([
+            'type' => 'success',
             'message' => 'Progress successfully cleared.',
         ]);
     }
