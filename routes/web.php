@@ -22,11 +22,12 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 use Inertia\Inertia;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\CalculatorController;
 
-Route::post('/fresh-start', [CalculatorController::class, 'freshStart'])
-    ->middleware(['auth'])
-    ->name('fresh-start');
-
+Route::middleware(['auth'])->group(function () {
+    Route::post('/fresh-start', [CalculatorController::class, 'freshStart'])
+        ->name('fresh-start');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
@@ -57,7 +58,7 @@ Route::get('/forbidden', function () {
 })->name('error.forbidden');
 
 
-use App\Http\Controllers\CalculatorController;
+
 
 Route::get('/check-auth', function () {
     return auth()->user();
