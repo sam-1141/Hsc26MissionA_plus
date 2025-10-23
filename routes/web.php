@@ -72,6 +72,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::get('/test-progress', [ProgressController::class, 'getStudentProgress'])->middleware('auth');
+
+
 // Route::middleware(['web'])->group(function () {
 //     Route::controller(AuthController::class)->group(function () {
 //         // Route::get("/login", "loadLoginForm")->name("auth.login");
