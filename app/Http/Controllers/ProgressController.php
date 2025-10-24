@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
+use Carbon\Carbon;
+
 use App\Models\ChapterLecture; // ✅ correct
 use App\Models\Progresses;
 use App\Models\StudentLectureProgress;
@@ -11,7 +14,36 @@ use Inertia\Inertia;
 
 class ProgressController extends Controller
 {
-    
+    protected function calculateRemainingTime($createdAt, $durationDays)
+{
+    // 1️⃣ Ensure created_at is a Carbon instance
+    $createdAt = $createdAt instanceof Carbon
+        ? $createdAt
+        : Carbon::parse($createdAt);
+
+    // 2️⃣ Convert both timestamps to app timezone
+    $appTimezone = config('app.timezone', 'UTC');
+    $createdAt = $createdAt->timezone($appTimezone);
+    $now = now()->timezone($appTimezone);
+
+    // 3️⃣ Ensure duration_days is valid
+    $durationDays = max(0, $durationDays ?? 0);
+
+    // 4️⃣ Calculate end time
+    $endTime = $createdAt->copy()->addDays($durationDays);
+
+    // 5️⃣ Calculate remaining seconds (correct order!)
+    $remainingSeconds = max(0, $now->diffInSeconds($endTime, false));
+
+    // 6️⃣ Convert to D:HH:MM:SS
+    $days = floor($remainingSeconds / 86400);
+    $hours = floor(($remainingSeconds % 86400) / 3600);
+    $minutes = floor(($remainingSeconds % 3600) / 60);
+    $seconds = $remainingSeconds % 60;
+
+    return sprintf("%d:%02d:%02d:%02d", $days, $hours, $minutes, $seconds);
+}
+
     protected function getStudentLectureProgressMap($studentId)
     {
 
@@ -61,27 +93,10 @@ class ProgressController extends Controller
                     ];
                 })->values()->toArray();
                 // Assume $progress->created_at comes from DB
-                $createdAt = $progress->created_at;
+                
+                $remainingTime = $this->calculateRemainingTime($progress->created_at, $progress->duration_days);
 
-                // 1️⃣ Ensure both timestamps are in the same timezone
-                $appTimezone = config('app.timezone', 'UTC');
-                $createdAt = $createdAt->copy()->timezone($appTimezone);
-                $now = now()->timezone($appTimezone);
-
-                // 2️⃣ Calculate the end time
-                $endTime = $createdAt->copy()->addDays($progress->duration_days);
-
-               // 3️⃣ Calculate remaining seconds
-                $remainingSeconds = max(0, $endTime->diffInSeconds($now, false));
-
-                // 4️⃣ Convert to D:HH:MM:SS
-                $days = floor($remainingSeconds / 86400);
-                $hours = floor(($remainingSeconds % 86400) / 3600);
-                $minutes = floor(($remainingSeconds % 3600) / 60);
-                $seconds = $remainingSeconds % 60;
-
-                $remainingTime = sprintf("%d:%02d:%02d:%02d", $days, $hours, $minutes, $seconds);
-
+              
                 return [
                     'chapter' => $chapterName,
                     'lectures' => $progress->lectures,
