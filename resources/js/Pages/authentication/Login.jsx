@@ -7,10 +7,11 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
     const route = useRoute();
     const [values, setValues] = useState({
         login: "",
-        exam_roll: "",
+        password: "",
     });
 
     const [error, setError] = useState(""); // for login validation (phone/email)
+    const [showPassword, setShowPassword] = useState(false);
 
     function handleChange(e) {
         const key = e.target.name;
@@ -52,7 +53,6 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
             ...values,
             login: formattedLogin,
         };
-        console.log(submitValues);
 
         router.post(route("execute.auth.login"), submitValues);
     };
@@ -68,7 +68,6 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                 <div className="login-form">
                     <div className="border border-primary p-4 rounded shadow">
                         <form onSubmit={handleSubmit}>
-                            <h3>এইচএসসি মিশনে এ প্লাস- পরীক্ষা দেওয়ার জন্য</h3>
                             <h2>লগ ইন করো</h2>
 
                             <label>
@@ -87,21 +86,44 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                             )}
 
                             <label>
-                                পরীক্ষার রোল
+                                পাসওয়ার্ড
                                 <span className="text-danger"> *</span>
                             </label>
                             <div style={{ position: "relative" }}>
                                 <input
-                                    type="text"
-                                    name="exam_roll"
-                                    placeholder="তোমার পরীক্ষার রোল"
-                                    value={values.exam_roll}
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    placeholder="তোমার পাসওয়ার্ড"
+                                    value={values.password}
                                     onChange={handleChange}
                                     style={{ paddingRight: "2.5rem" }}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{
+                                        position: "absolute",
+                                        right: "0.5rem",
+                                        top: "40%",
+                                        transform: "translateY(-50%)",
+                                        background: "none",
+                                        border: "none",
+                                        cursor: "pointer",
+                                        padding: 0,
+                                        margin: 0,
+                                        color: "#555",
+                                    }}
+                                    aria-label={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    {showPassword ? (
+                                        <i className="fas fa-eye-slash" style={{ fontSize: "18px" }}></i>
+                                    ) : (
+                                        <i className="fas fa-eye" style={{ fontSize: "18px" }}></i>
+                                    )}
+                                </button>
                             </div>
 
-                            {/* Show backend validation errors and flash error under exam_roll */}
+                            {/* Show backend validation errors and flash error under password */}
                             <div className="text-danger">
                                 {/* Backend validation errors (Laravel) */}
                                 {errors &&
@@ -109,39 +131,39 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                         <div key={idx}>{errMsg}</div>
                                     ))}
 
-                                {/* Flash error (like wrong roll or login) */}
+                                {/* Flash error (like wrong password) */}
                                 {flash?.error && <div>{flash.error}</div>}
                             </div>
 
-                            <div className="forgot-password text-start mt-3">
+                            {/* <div className="forgot-password text-start mt-3">
                                 <Link href={route("auth.forgot.password")}>
-                                    পরীক্ষার রোল ভুলে গিয়েছো?
+                                    পাসওয়ার্ড ভুলে গিয়েছো?
                                 </Link>
-                            </div>
+                            </div> */}
 
                             <button type="submit" className="login-btn fw-bold mt-3">
                                 লগ ইন
                             </button>
 
-                            <p className="error-message fst-italic mt-3">
-                                পূনঃস্মরণ: তুমি যদি কখনো Registration না করে
-                                থাকো, তাহলে তোমার Registration করতে{" "}
+                            {/* <p className="error-message fst-italic mt-3">
+                                পূনঃস্মরণ: তুমি যদি কখনো পাসওয়ার্ড সেট না করে
+                                থাকো, তাহলে তোমার পাসওয়ার্ড সেট করতে{" "}
                                 <span className="forgot-password">
-                                    <Link href={route("auth.registration.form")}>
-                                        Hsc Mission A+ Registration?
+                                    <Link href={route("auth.forgot.password")}>
+                                        পাসওয়ার্ড ভুলে গিয়েছো?
                                     </Link>
                                 </span>{" "}
                                 -তে ক্লিক করো
-                            </p>
+                            </p> */}
 
                             <hr />
 
-                            <div className="signup-link">
+                            {/* <div className="signup-link">
                                 <span>ফাহাদ'স টিউটোরিয়াল-এ নতুন?</span>
                                 <Link href={route("auth.registration.form")} className="fw-bold">
                                     সাইন আপ করো
                                 </Link>
-                            </div>
+                            </div> */}
                         </form>
                     </div>
                 </div>
