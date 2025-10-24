@@ -41,7 +41,7 @@ class ProgressController extends Controller
     $minutes = floor(($remainingSeconds % 3600) / 60);
     $seconds = $remainingSeconds % 60;
 
-    return sprintf("%d:%02d:%02d:%02d", $days, $hours, $minutes, $seconds);
+    return sprintf("%d:%02d", $days, $hours);
 }
 
     protected function getStudentLectureProgressMap($studentId)
@@ -95,8 +95,7 @@ class ProgressController extends Controller
                 // Assume $progress->created_at comes from DB
                 
                 $remainingTime = $this->calculateRemainingTime($progress->created_at, $progress->duration_days);
-
-              
+                
                 return [
                     'chapter' => $chapterName,
                     'lectures' => $progress->lectures,

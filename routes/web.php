@@ -35,6 +35,15 @@ Route::middleware(['auth'])->group(function () {
         ->name('fresh-start');
 });
 
+use App\Http\Controllers\AdminLectureController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/lectures', [AdminLectureController::class, 'index'])->name('admin.lectures');
+    Route::post('/admin/lectures', [AdminLectureController::class, 'store'])->name('admin.lectures.store');
+});
+
+
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
 });

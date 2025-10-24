@@ -8,12 +8,22 @@ export default function ProgressDashboard({ progressData }) {
     const [subjectsState, setSubjectsState] = useState(progressData.subjects);
 
     // Calculate total days and percentage progress
-    const calculateSubjectProgress = (chapters) => {
-        const totalDays = chapters.reduce((sum, ch) => sum + ch.duration_days, 0);
-        const remainingDays = chapters.reduce((sum, ch) => sum + (ch.remaining_days || 0), 0);
-        const percentage = ((totalDays - remainingDays) / totalDays) * 100;
-        return { totalDays, remainingDays, percentage };
-    };
+    // Convert "D:HH" to fractional days
+const parseRemainingDays = (str) => {
+    if (!str) return 0;
+    const [days, hours] = str.split(":").map(Number);
+    return days + (hours / 24);
+};
+
+// Calculate total days and percentage progress
+const calculateSubjectProgress = (chapters) => {
+    const totalDays = chapters.reduce((sum, ch) => sum + ch.duration_days, 0);
+    const remainingDays = chapters.reduce((sum, ch) => sum + parseRemainingDays(ch.remaining_days), 0);
+    const percentage = totalDays > 0 ? ((remainingDays) / totalDays) * 100 : 0;
+    return { totalDays, remainingDays: chapters.map(ch => ch.remaining_days), percentage };
+    
+};
+
      
 
     const formatRemainingTime = (floatDays) => {
