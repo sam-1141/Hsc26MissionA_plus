@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ChapterLecture;
+use App\Models\ChapterLecture; // ✅ correct
 use App\Models\Progresses;
 use App\Models\StudentLectureProgress;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ProgressController extends Controller
 {
-    /**
-     * Optimized: Fetch all lecture completion statuses in one query
-     */
+    
     protected function getStudentLectureProgressMap($studentId)
     {
+
+
         // Fetch all lecture progress for the student
         $progressRecords = StudentLectureProgress::where('student_id', $studentId)->get();
 
@@ -59,12 +60,33 @@ class ProgressController extends Controller
                         'status_of_completion' => $status,
                     ];
                 })->values()->toArray();
+                // Assume $progress->created_at comes from DB
+                $createdAt = $progress->created_at;
+
+                // 1️⃣ Ensure both timestamps are in the same timezone
+                $appTimezone = config('app.timezone', 'UTC');
+                $createdAt = $createdAt->copy()->timezone($appTimezone);
+                $now = now()->timezone($appTimezone);
+
+                // 2️⃣ Calculate the end time
+                $endTime = $createdAt->copy()->addDays($progress->duration_days);
+
+               // 3️⃣ Calculate remaining seconds
+                $remainingSeconds = max(0, $endTime->diffInSeconds($now, false));
+
+                // 4️⃣ Convert to D:HH:MM:SS
+                $days = floor($remainingSeconds / 86400);
+                $hours = floor(($remainingSeconds % 86400) / 3600);
+                $minutes = floor(($remainingSeconds % 3600) / 60);
+                $seconds = $remainingSeconds % 60;
+
+                $remainingTime = sprintf("%d:%02d:%02d:%02d", $days, $hours, $minutes, $seconds);
 
                 return [
                     'chapter' => $chapterName,
                     'lectures' => $progress->lectures,
                     'duration_days' => $progress->duration_days,
-                    'remaining_days' => max(0, $progress->duration_days - (now()->diffInHours($progress->created_at) / 24)),
+                    'remaining_days' => $remainingTime,
                     'lectures_list' => $lecturesList,
                 ];
             })->values()->toArray();
@@ -84,38 +106,28 @@ class ProgressController extends Controller
      * Toggle lecture completion status for the logged-in student
      */
     public function apiToggleLecture(Request $request)
-{
-    $request->validate([
-        'subject' => 'required|string',
-        'chapter' => 'required|string',
-        'lecture_number' => 'required|integer',
-    ]);
+    {
+        $request->validate([
+            'subject' => 'required|string',
+            'chapter' => 'required|string',
+            'lecture_number' => 'required|integer',
+        ]);
 
-    $student_id = Auth::id();
+        $student_id = Auth::id();
 
-    $progress = StudentLectureProgress::where('student_id', $student_id)
-        ->where('subject', $request->subject)
-        ->where('chapter', $request->chapter)
-        ->where('lecture_number', $request->lecture_number)
-        ->first();
+        $progress = StudentLectureProgress::where('student_id', $student_id)
+            ->where('subject', $request->subject)
+            ->where('chapter', $request->chapter)
+            ->where('lecture_number', $request->lecture_number)
+            ->first();
 
-    if (!$progress) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Lecture not found',
-        ], 404);
+        if (! $progress) {
+            return response()->json(['success' => false, 'message' => 'Lecture not found'], 404);
+        }
+
+        $progress->status_of_completion = ! $progress->status_of_completion;
+        $progress->save();
+
+        return back();
     }
-
-    // Toggle completion
-    $progress->status_of_completion = $request->boolean('status_of_completion');
-    $progress->save();
-
-
-    return response()->json([
-        'success' => true,
-        'status_of_completion' => $progress->status_of_completion,
-        'lecture' => $progress,
-    ]);
-}
-
 }

@@ -24,6 +24,12 @@ use Inertia\Inertia;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\CalculatorController;
 
+
+Route::post('/api/toggle-lecture', [ProgressController::class, 'apiToggleLecture'])
+    ->name('toggleLecture')
+    ->middleware('auth');
+
+
 Route::middleware(['auth'])->group(function () {
     Route::post('/fresh-start', [CalculatorController::class, 'freshStart'])
         ->name('fresh-start');
@@ -44,6 +50,9 @@ Route::middleware(['auth'])->get('/check-auth', function () {
         'Expires' => '0',
     ]);
 });
+
+Route::middleware('auth')->post('/api/toggle-lecture', [ProgressController::class, 'apiToggleLecture'])->name('toggle.lecture');
+
 
 
 
@@ -87,6 +96,7 @@ Route::get('/test-progress', [ProgressController::class, 'getStudentProgress'])-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard'); 
 })->name('dashboard')->middleware('auth');
+
 
 
 Route::controller(AuthController::class)->group(function () {
