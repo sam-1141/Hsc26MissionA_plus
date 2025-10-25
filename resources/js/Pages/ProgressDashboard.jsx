@@ -1,48 +1,42 @@
 import React, { useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Link, router } from "@inertiajs/react";
-import { route } from "ziggy-js"; // ✅ named import
+import { route } from "ziggy-js";
+import { motion } from "framer-motion";
+import { CheckCircle, Clock, ChevronDown } from "lucide-react";
 
 export default function ProgressDashboard({ progressData }) {
-    // State for live updates
     const [subjectsState, setSubjectsState] = useState(progressData.subjects);
 
-    // Calculate total days and percentage progress
-    // Convert "D:HH" to fractional days
-const parseRemainingDays = (str) => {
-    if (!str) return 0;
-    const [days, hours] = str.split(":").map(Number);
-    return days + (hours / 24);
-};
+    // Parse remaining days "D:HH"
+    const parseRemainingDays = (str) => {
+        if (!str) return 0;
+        const [days, hours] = str.split(":").map(Number);
+        return days + hours / 24;
+    };
 
-// Calculate total days and percentage progress
-const calculateSubjectProgress = (chapters) => {
-    const totalDays = chapters.reduce((sum, ch) => sum + ch.duration_days, 0);
-    const remainingDays = chapters.reduce((sum, ch) => sum + parseRemainingDays(ch.remaining_days), 0);
-    const percentage = totalDays > 0 ? ((remainingDays) / totalDays) * 100 : 0;
-    return { totalDays, remainingDays: chapters.map(ch => ch.remaining_days), percentage };
-    
-};
-
-     
+    const calculateSubjectProgress = (chapters) => {
+        const totalDays = chapters.reduce((sum, ch) => sum + ch.duration_days, 0);
+        const totalRemainingDays = chapters.reduce(
+            (sum, ch) => sum + parseRemainingDays(ch.remaining_days),
+            0
+        );
+        const percentage = totalDays > 0 ? (totalRemainingDays / totalDays) * 100 : 0;
+        return { totalDays, remainingDays: totalRemainingDays, percentage };
+    };
 
     const formatRemainingTime = (floatDays) => {
-    const totalSeconds = Math.floor(floatDays * 24 * 60 * 60); // convert days to seconds
-    const days = Math.floor(totalSeconds / (24 * 60 * 60));
-    const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
+        const totalSeconds = Math.floor(floatDays * 24 * 60 * 60);
+        const days = Math.floor(totalSeconds / (24 * 60 * 60));
+        const hours = Math.floor((totalSeconds % (24 * 60 * 60)) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        return `${days}d ${hours}h ${minutes}m`;
+    };
 
-    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
-};
-
-    // Toggle lecture completion
     const toggleLecture = async (subject, chapterName, lectureNumber) => {
         const updatedSubjects = { ...subjectsState };
         const chapter = updatedSubjects[subject].find(ch => ch.chapter === chapterName);
         const lecture = chapter.lectures_list.find(l => l.lecture_number === lectureNumber);
-
-        // Optimistic UI update
         lecture.status_of_completion = !lecture.status_of_completion;
         setSubjectsState(updatedSubjects);
 
@@ -53,7 +47,6 @@ const calculateSubjectProgress = (chapters) => {
                 lecture_number: lectureNumber,
             }, { preserveScroll: true });
         } catch (error) {
-            // Revert on error
             lecture.status_of_completion = !lecture.status_of_completion;
             setSubjectsState(updatedSubjects);
             console.error("Toggle lecture error:", error);
@@ -61,79 +54,133 @@ const calculateSubjectProgress = (chapters) => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-50 p-8">
             {/* Dashboard Link */}
             <div className="mb-6 flex items-center gap-2">
                 <Link
                     href={route("dashboard")}
-                    className="flex items-center justify-center bg-white bg-opacity-90 text-gray-800 text-xl md:text-2xl px-5 py-3 rounded-full shadow-lg border border-transparent hover:bg-opacity-100 transition-all duration-300"
+                    className="flex items-center justify-center bg-white/70 backdrop-blur-md text-gray-800 text-xl md:text-2xl px-5 py-3 rounded-full shadow-md hover:shadow-lg border border-gray-200 hover:bg-white transition-all duration-300"
                 >
                     🏠
                 </Link>
             </div>
 
             {/* Header */}
-            <h2 className="text-3xl font-bold text-center mb-8 text-indigo-700">
-                Student Progress Dashboard
-                <div className="mt-4 flex flex-wrap justify-center gap-4 text-lg">
-                    <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full flex items-center gap-1">Physics: 🪐⚡🔭</span>
-                    <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center gap-1">Higher Math: ➗➕➖📐</span>
-                    <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full flex items-center gap-1">Biology: 🧬🦠🌱</span>
-                    <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full flex items-center gap-1">Chemistry: ⚗️🧪🧫</span>
-                </div>
-            </h2>
+            <h2 className="text-[clamp(1.5rem,4vw,3rem)] font-extrabold text-center mb-10 text-indigo-700 tracking-tight">
+  Student Progress Dashboard
+</h2>
 
-            {/* Subjects */}
+
+
+
             {Object.entries(subjectsState).map(([subject, chapters]) => {
                 const { remainingDays, percentage } = calculateSubjectProgress(chapters);
 
                 return (
-                    <div key={subject} className="mb-8 bg-white rounded-2xl shadow p-6">
+                    <div
+                        key={subject}
+                        className="mb-10 bg-white/90 backdrop-blur-md rounded-3xl shadow-xl p-6 border border-gray-100"
+                    >
                         {/* Subject Header */}
-                        <h2 className="text-xl font-semibold mb-2">{subject}</h2>
+                       {/* Subject Header */}
+<div className="flex justify-between items-center mb-4">
+    <h2 className="text-xl font-semibold text-gray-800">{subject}</h2>
+    <span className="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">
+        {formatRemainingTime(remainingDays)} left
+    </span>
+</div>
+
+
+
+
+
 
                         {/* Progress Bar */}
-                        <div className="w-full bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
-                            <div
-                                style={{ width: `${percentage}%` }}
-                                className="h-4 bg-indigo-500 transition-all duration-700"
+                        <div className="relative w-full h-4 bg-gray-200 rounded-full overflow-hidden mb-4">
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${percentage}%` }}
+                                transition={{ duration: 0.8 }}
+                                className="h-full bg-gradient-to-r from-indigo-500 to-indigo-700 rounded-full shadow-inner"
                             />
                         </div>
-                        <p className="text-xl md:text-2xl font-bold text-gray-800 mb-4 inline-block bg-white bg-opacity-90 px-5 py-3 rounded-full shadow-xl border border-gray-300">
-                            Remaining Time: {(remainingDays)}/
-                            {chapters.reduce((sum, ch) => sum + ch.duration_days, 0)}
-                        </p>
+
+                        {/* Timer Display */}
+                        <div className="flex items-center gap-2 text-gray-700 mb-6">
+                            <Clock className="w-5 h-5 text-indigo-500" />
+                            <p className="text-base font-medium">
+                                Remaining:{" "}
+                                <span className="font-semibold text-gray-900">
+                                    {formatRemainingTime(remainingDays)}
+                                </span>{" "}
+                                / Total:{" "}
+                                <span className="font-semibold text-gray-900">
+                                    {chapters.reduce((sum, ch) => sum + ch.duration_days, 0)} days
+                                </span>
+                            </p>
+                        </div>
 
                         {/* Chapters */}
                         {chapters.map((chapter) => (
-                            <Disclosure key={chapter.chapter} as="div" className="mb-4">
+                            <Disclosure key={chapter.chapter} as="div" className="mb-3">
                                 {({ open }) => (
                                     <>
-                                        <Disclosure.Button className="w-full flex justify-between items-center bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-lg font-medium">
+                                        <Disclosure.Button
+                                            className={`w-full flex justify-between items-center px-5 py-3 rounded-2xl font-medium text-gray-800 transition-all duration-300 shadow-sm border ${open
+                                                ? "bg-indigo-50 border-indigo-200"
+                                                : "bg-gray-50 hover:bg-gray-100 border-gray-200"
+                                                }`}
+                                        >
                                             <span>{chapter.chapter}</span>
+                                            <ChevronDown
+                                                className={`w-5 h-5 text-gray-500 transform transition-transform ${open ? "rotate-180" : ""
+                                                    }`}
+                                            />
                                         </Disclosure.Button>
 
-                                        <Disclosure.Panel className="mt-2 bg-white rounded-lg shadow-inner p-4">
+                                        <Disclosure.Panel className="mt-3 bg-white rounded-xl shadow-inner p-4 border border-gray-100">
                                             {chapter.lectures_list && (
-                                                <div className="space-y-2">
+                                                <div className="space-y-3">
                                                     {chapter.lectures_list.map((lec) => (
                                                         <Disclosure key={lec.lecture_number}>
-                                                            {({ open }) => (
+                                                            {({ open: subOpen }) => (
                                                                 <>
-                                                                    <Disclosure.Button className="w-full flex justify-between items-center bg-gray-100 px-3 py-1 rounded hover:bg-gray-200 text-sm">
-                                                                        <span>
-                                                                            Lecture {lec.lecture_number} {" "}
-                                                                            {lec.status_of_completion ? "(Completed)" : "(Pending)"}
-                                                                        </span>
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            checked={lec.status_of_completion}
-                                                                            onChange={() => toggleLecture(subject, chapter.chapter, lec.lecture_number)}
-                                                                            className="h-5 w-5 accent-indigo-500 cursor-pointer"
-                                                                        />
+                                                                    {/* Lecture Row */}
+                                                                    <Disclosure.Button className="w-full flex justify-between items-center bg-gray-50 hover:bg-gray-100 rounded-xl px-4 py-2 border border-gray-200 transition-all text-sm">
+                                                                        <div className="flex items-center gap-2">
+                                                                            {lec.status_of_completion ? (
+                                                                                <CheckCircle className="w-5 h-5 text-green-500" />
+                                                                            ) : (
+                                                                                <Clock className="w-5 h-5 text-gray-400" />
+                                                                            )}
+                                                                            <span className="text-gray-800">
+                                                                                Lecture {lec.lecture_number}{" "}
+                                                                                {lec.status_of_completion
+                                                                                    ? "(Completed)"
+                                                                                    : "(Pending)"}
+                                                                            </span>
+                                                                        </div>
+
+                                                                        {/* Modern toggle */}
+                                                                        <label className="relative inline-flex items-center cursor-pointer">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={lec.status_of_completion}
+                                                                                onChange={() =>
+                                                                                    toggleLecture(
+                                                                                        subject,
+                                                                                        chapter.chapter,
+                                                                                        lec.lecture_number
+                                                                                    )
+                                                                                }
+                                                                                className="sr-only peer"
+                                                                            />
+                                                                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:bg-indigo-600 transition-all"></div>
+                                                                            <div className="absolute left-0.5 top-0.5 bg-white w-5 h-5 rounded-full border border-gray-300 peer-checked:translate-x-5 peer-checked:border-indigo-500 transition-all duration-300"></div>
+                                                                        </label>
                                                                     </Disclosure.Button>
 
-                                                                    {/* Lecture links */}
+                                                                    {/* Collapsible Lecture Links */}
                                                                     <Disclosure.Panel className="p-2 pl-6">
                                                                         <ul className="list-disc list-inside space-y-1 text-blue-600">
                                                                             {lec.links.map((link, i) => (
