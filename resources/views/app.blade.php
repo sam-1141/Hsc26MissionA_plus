@@ -21,7 +21,7 @@
     <meta name="keywords"
         content="Fahad's Tutorial, FT Academy, Fahad Sir, Exam" />
     <meta name="author" content="Fahad's Tutorial" />
-    <title>Exam | Fahad's Tutorial</title>
+    <title>Routine Calculator || Fahad's Tutorial</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
