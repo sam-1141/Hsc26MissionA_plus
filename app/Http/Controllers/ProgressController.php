@@ -12,35 +12,37 @@ use Inertia\Inertia;
 
 class ProgressController extends Controller
 {
-    protected function calculateRemainingTime($createdAt, $durationDays)
-    {
-        // 1️⃣ Ensure created_at is a Carbon instance
-        $createdAt = $createdAt instanceof Carbon
-            ? $createdAt
-            : Carbon::parse($createdAt);
+    function calculateRemainingTime($createdAt, $durationDays)
+{
+    // 1️⃣ Ensure created_at is a Carbon instance
+    $createdAt = $createdAt instanceof Carbon
+        ? $createdAt
+        : Carbon::parse($createdAt);
 
-        // 2️⃣ Convert both timestamps to app timezone
-        $appTimezone = config('app.timezone', 'UTC');
-        $createdAt = $createdAt->timezone($appTimezone);
-        $now = now()->timezone($appTimezone);
+    // 2️⃣ Normalize to UTC first to prevent double conversion issues
+    $createdAt = $createdAt->clone()->setTimezone('UTC');
+    $now = now('UTC');
 
-        // 3️⃣ Ensure duration_days is valid
-        $durationDays = max(0, $durationDays ?? 0);
+    // 3️⃣ Convert both to app timezone (consistent local display)
+    $appTimezone = config('app.timezone', 'UTC');
+    $createdAt = $createdAt->copy()->setTimezone($appTimezone);
+    $now = $now->copy()->setTimezone($appTimezone);
 
-        // 4️⃣ Calculate end time
-        $endTime = $createdAt->copy()->addDays($durationDays);
+    // 4️⃣ Ensure duration_days is valid
+    $durationDays = max(0, (int) ($durationDays ?? 0));
 
-        // 5️⃣ Calculate remaining seconds (correct order!)
-        $remainingSeconds = max(0, $now->diffInSeconds($endTime, false));
+    // 5️⃣ Calculate end time
+    $endTime = $createdAt->copy()->addDays($durationDays);
 
-        // 6️⃣ Convert to D:HH:MM:SS
-        $days = floor($remainingSeconds / 86400);
-        $hours = floor(($remainingSeconds % 86400) / 3600);
-        $minutes = floor(($remainingSeconds % 3600) / 60);
-        $seconds = $remainingSeconds % 60;
-        
-        return sprintf('%d:%02d', $days, $hours);
-    }
+    // 6️⃣ Calculate remaining seconds (respect sign)
+    $remainingSeconds = max(0, $now->diffInSeconds($endTime, false));
+
+    // 7️⃣ Convert to D:HH format
+    $days = floor($remainingSeconds / 86400);
+    $hours = floor(($remainingSeconds % 86400) / 3600);
+
+    return sprintf('%d:%02d', $days, $hours);
+}
 
     protected function getStudentLectureProgressMap($studentId)
     {

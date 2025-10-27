@@ -135,7 +135,7 @@ export default function Calculator({ subjects }) {
     onClick={handleDirectCalculate} // <-- call direct calculation
     className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
 >
-    Calculate Total
+    Create Your Study Plan
 </button>
 
                         </div>

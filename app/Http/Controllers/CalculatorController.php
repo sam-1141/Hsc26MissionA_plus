@@ -78,14 +78,14 @@ class CalculatorController extends Controller
         }
 
         // calculate totals
-        $totalLectures = 0;
-        $totalDays = 0;
-        foreach ($selected as $chapters) {
-            foreach ($chapters as $info) {
-                $totalLectures += $info['lectures'] ?? 0;
-                $totalDays += $info['duration_days'] ?? 0;
-            }
-        }
+        // $totalLectures = 0;
+        // $totalDays = 0;
+        // foreach ($selected as $chapters) {
+        //     foreach ($chapters as $info) {
+        //         $totalLectures += $info['lectures'] ?? 0;
+        //         $totalDays += $info['duration_days'] ?? 0;
+        //     }
+        // }
 
         return redirect()->route('student.progress');
     }
