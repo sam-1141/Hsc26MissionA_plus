@@ -41,22 +41,19 @@ export default function Calculator({ subjects }) {
     };
 
     // ✅ Calculate button click
-    const handleCalculateClick = (e) => {
-        e.preventDefault();
-        // Show warning modal with callback to calculate after clearing
-        setConfirmCallback(() => () => {
-            // After clearing, calculate normally
-            router.post(
-                route("calculator.calculate"),
-                { selected },
-                {
-                    forceFormData: false,
-                    onSuccess: () => console.log("Calculation done!"),
-                }
-            );
-        });
-        setShowConfirm(true);
-    };
+    const handleDirectCalculate = (e) => {
+    e.preventDefault();
+
+    router.post(
+        route("calculator.calculate"),
+        { selected },
+        {
+            forceFormData: false,
+            onSuccess: () => console.log("Calculation done!"),
+        }
+    );
+};
+
 
     // ✅ Allow Esc key to close modal
     useEffect(() => {
@@ -134,12 +131,13 @@ export default function Calculator({ subjects }) {
 
                         <div className="text-center">
                             <button
-                                type="submit"
-                                onClick={handleCalculateClick}
-                                className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
-                            >
-                                Calculate Total
-                            </button>
+    type="submit"
+    onClick={handleDirectCalculate} // <-- call direct calculation
+    className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl shadow hover:bg-indigo-700 transition"
+>
+    Calculate Total
+</button>
+
                         </div>
                     </form>
 
@@ -220,7 +218,7 @@ export default function Calculator({ subjects }) {
                                 transition={{ duration: 0.4 }}
                                 className="fixed bottom-6 right-6 bg-green-500 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2 z-50"
                             >
-                                ✅ Progress cleared! Calculating...
+                                ✅ Progress cleared! Do a Fresh Start
                             </motion.div>
                         )}
                     </AnimatePresence>

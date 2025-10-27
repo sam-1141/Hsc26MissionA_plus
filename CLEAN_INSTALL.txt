@@ -1,0 +1,10 @@
+# On LINODE - Clean up and prepare:
+
+rm -rf /var/www/timer
+
+cd /var/www
+
+ls -la
+
+# Wait for file transfer from local machine...
+

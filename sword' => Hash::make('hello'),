@@ -1,0 +1,16 @@
+[90m= [39m[34;4mIlluminate\Support\Collection[39;24m {#6481
+    [34mall[39m: [
+      {#6482
+        +"[1mid[22m": [35m1[39m,
+        +"[1mname[22m": "[32mTest User[39m",
+        +"[1memail[22m": "[32mtest@example.com[39m",
+        +"[1memail_verified_at[22m": "[32m2025-10-27 01:46:05[39m",
+        +"[1mpassword[22m": "[32m$2y$12$shhAmYCX8tNVxDQON3p6TOVJuPt6WceOdHZJodQVGe9QuatlXL6oq[39m",
+        +"[1mstatus[22m": [35m1[39m,
+        +"[1mremember_token[22m": "[32mEa04JWogXo[39m",
+        +"[1mcreated_at[22m": "[32m2025-10-27 01:46:05[39m",
+        +"[1mupdated_at[22m": "[32m2025-10-27 01:46:05[39m",
+      },
+    ],
+  }
+

@@ -31,11 +31,15 @@ class AdminLectureController extends Controller
             'lecture_link' => 'required|url',
         ]);
 
-        ChapterLecture::create([
-            'chapter' => $request->chapter,
-            'lecture_number' => $request->lecture_number,
-            'lecture_link' => $request->lecture_link,
-        ]);
+        ChapterLecture::updateOrCreate(
+    [
+        'chapter' => $request->chapter,          // 🔹 fields to check for existing record
+        'lecture_number' => $request->lecture_number,
+    ],
+    [
+        'lecture_link' => $request->lecture_link, // 🔹 fields to update if found or create
+    ]
+);
 
         return redirect()->back()->with('success', 'Lecture added successfully');
     }

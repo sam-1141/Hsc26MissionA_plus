@@ -24,6 +24,11 @@ use Inertia\Inertia;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\CalculatorController;
 
+Route::post('/progress/start', [ProgressController::class, 'apiStartProgress'])
+    ->name('progress.apiStart')
+    ->middleware('auth'); // ensure user is logged in
+
+
 
 Route::post('/api/toggle-lecture', [ProgressController::class, 'apiToggleLecture'])
     ->name('toggleLecture')
@@ -48,9 +53,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/progress', [ProgressController::class, 'getStudentProgress'])->name('student.progress');
 });
 
-// Route::middleware(['auth'])->get('/check-auth', function () {
-//     dd(auth()->user(), Auth::id());
-// });
 
 Route::middleware(['auth'])->get('/check-auth', function () {
     return response()->json(auth()->user(), 200, [
@@ -62,11 +64,6 @@ Route::middleware(['auth'])->get('/check-auth', function () {
 
 Route::middleware('auth')->post('/api/toggle-lecture', [ProgressController::class, 'apiToggleLecture'])->name('toggle.lecture');
 
-
-
-
-// Route::get('/progress/{student_id}', [ProgressController::class, 'getStudentProgress']);
-// Route::get('/progress', [ProgressController::class, 'getStudentProgress']);
 
 
 Route::get('/lectures/{chapter}', [App\Http\Controllers\ChapterLectureController::class, 'getLectures']);
@@ -93,14 +90,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/test-progress', [ProgressController::class, 'getStudentProgress'])->middleware('auth');
 
 
-// Route::middleware(['web'])->group(function () {
-//     Route::controller(AuthController::class)->group(function () {
-//         // Route::get("/login", "loadLoginForm")->name("auth.login");
-//         Route::get('/logout', 'logout')->name('auth.logout');
-//         Route::post('/login', [AuthController::class, 'login'])->name('auth.login.post');
-
-//     });
-// });
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard'); 

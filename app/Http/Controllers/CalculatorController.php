@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\StudentLectureProgress;
 use App\Models\Progresses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -90,32 +91,41 @@ class CalculatorController extends Controller
     }
 
     public function freshStart()
-    {
-        $studentId = Auth::id();
+{
+    $studentId = Auth::id();
 
-        if (! $studentId) {
-            return back()->with([
-                'type' => 'error',
-                'message' => 'Unauthorized access. Please log in first.',
-            ]);
-        }
-
-        $existing = Progresses::where('student_id', $studentId)->count();
-
-        if ($existing > 0) {
-            $deleted = Progresses::where('student_id', $studentId)->delete();
-            \Log::info('Fresh start: deleted progress', [
-                'student_id' => $studentId,
-                'deleted_records' => $deleted,
-            ]);
-        } else {
-            \Log::info('Fresh start: no records found', ['student_id' => $studentId]);
-        }
-
-        // ✅ Instead of JSON, redirect back with a flash message (works best with Inertia)
+    if (! $studentId) {
         return back()->with([
-            'type' => 'success',
-            'message' => 'Progress successfully cleared.',
+            'type' => 'error',
+            'message' => 'Unauthorized access. Please log in first.',
         ]);
     }
+
+    // Delete from Progresses
+    $existingProgresses = Progresses::where('student_id', $studentId)->count();
+    if ($existingProgresses > 0) {
+        $deletedProgresses = Progresses::where('student_id', $studentId)->delete();
+        \Log::info('Fresh start: deleted progress', [
+            'student_id' => $studentId,
+            'deleted_records' => $deletedProgresses,
+        ]);
+    } else {
+        \Log::info('Fresh start: no progress records found', ['student_id' => $studentId]);
+    }
+
+    // Delete from StudentLectureProgress
+    $existingLectures = StudentLectureProgress::where('student_id', $studentId)->count();
+    if ($existingLectures > 0) {
+        $deletedLectures = StudentLectureProgress::where('student_id', $studentId)->delete();
+        \Log::info('Fresh start: deleted student lecture progress', [
+            'student_id' => $studentId,
+            'deleted_records' => $deletedLectures,
+        ]);
+    } else {
+        \Log::info('Fresh start: no lecture progress records found', ['student_id' => $studentId]);
+    }
+
+    // Redirect back with success flash message
+    return back();
+}
 }
