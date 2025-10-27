@@ -108,14 +108,14 @@ export default function ProgressDashboard({ progressData }) {
                                                 <button
                                                     onClick={() => startChapter(subject, chapter.chapter)}
                                                     className="flex items-center gap-2 text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full hover:bg-indigo-100 transition"
-                                                >
+                                                ><span>Duration: {chapter.duration_days} days </span>
                                                     <Play className="w-4 h-4" /> Start
                                                 </button>
                                             ) : (
-                                                <span className="inline-flex items-center gap-2 text-base font-bold text-red-700 bg-gradient-to-r from-red-100 to-red-200 border border-red-300 rounded-full px-4 py-2 shadow-sm animate-pulse">
+                                               <span className="inline-flex items-center gap-2 text-base font-bold text-red-700 bg-gradient-to-r from-red-100 to-red-200 border border-red-300 rounded-full px-4 py-2 shadow-sm">
     ⏳ <span className="tabular-nums tracking-tight">{formatRemainingTime(remainingDays)}</span>
-    <span className="ml-1 font-medium text-red-600">left</span>
 </span>
+
 
 
                                             )}

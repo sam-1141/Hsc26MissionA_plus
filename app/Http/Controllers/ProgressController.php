@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ChapterLecture;
-use App\Models\Progresses; // ✅ correct
+use App\Models\Progresses; 
 use App\Models\StudentLectureProgress;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
