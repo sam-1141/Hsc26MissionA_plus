@@ -1,9 +1,0 @@
-# Run these on your LOCAL machine (open new terminal):
-
-cd ~/MY_Projects/New_Timer
-
-scp -r . root@172.235.251.160:/var/www/timer
-
-# Or with rsync (better - excludes large folders):
-# rsync -avz --exclude 'node_modules' --exclude 'vendor' --exclude '.git' . root@172.235.251.160:/var/www/timer
-
