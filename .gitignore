@@ -33,3 +33,29 @@ yarn-error.log
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
+AFTER_TRANSFER.txt
+
+as $name => $model) {
+
+CLEAN_INSTALL.txt
+
+e AppModelsUser
+
+essions as $payload) {
+
+install-php8.2.sh
+linode-deploy.sh
+
+nginx-laravel.conf
+ngrok-stable-linux-amd64.zip
+
+ngrok-stable-linux-amd64.zip.1
+ngrok-stable-linux-amd64.zip.2
+
+ngrok.tgz
+ngrok.zip
+RUN_NOW.txt
+ses')->get();
+supervisor-worker.conf
+sword' => Hash::make('hello'),
+TRANSFER_NOW.txt
