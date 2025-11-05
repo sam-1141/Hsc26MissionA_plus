@@ -6,6 +6,8 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\AdminLectureController;
 use App\Http\Controllers\AuthController;
+use
+App\Http\Controllers\Student\Hsc26MapRegistrationController;
 
 
 
@@ -13,7 +15,7 @@ use App\Http\Controllers\AuthController;
 Route::get('/', function () {
     return auth()->check()
         ? redirect()->route('dashboard')
-        : redirect()->route('auth.login');
+        : redirect()->route('auth.registration.form');
 })->name('root');
 
 
@@ -63,11 +65,15 @@ Route::get('/dashboard', function () {
 
 
 Route::controller(AuthController::class)->group(function () {
-
-    Route::get("/login", "loadLoginForm")->name("auth.login");
-    Route::post("/login", "login")->name("execute.auth.login");
+    // route for load login form
+    Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
     Route::get('/logout', 'logout')->name('auth.logout');
-    
+    // route for load forgot passwordForm
+    Route::get("/auth/forgot-password", "loadForgotPasswordForm")->name('auth.forgot.password');
+    // route for load registration form
+    Route::get("/HscMisssionA+/registration", "loadRegistrationForm")->name("auth.registration.form");
+Route::post('/register', [Hsc26MapRegistrationController::class, 'store'])
+     ->name('execute.auth.hsc26mapregistration');
     
    
 });
