@@ -32,7 +32,7 @@ function Registration({ flash, errors }) {
         facebook: "",
         college: "",
         courseName: "",
-        hsc26Mission: false,
+        hsc26Mission: "NO",
         feedback: "",
     });
 
@@ -87,6 +87,14 @@ function Registration({ flash, errors }) {
             toast.error("কলেজের নাম অবশ্যই নির্বাচন করতে হবে");
             return;
         }
+        if(!data.courseName){
+            toast.error("এইচএসসি ব্যাচ উল্লেখ করতে হবে।")
+            return
+        }
+        if(!data.feedback){
+            toast.error("🎁 উপহার পাঠানোর জন্য ঠিকানার ঘরটি সঠিকভাবে পূরণ করা জরুরি")
+            return
+        }
 
 
 
@@ -94,37 +102,37 @@ function Registration({ flash, errors }) {
             ? `88${data.mobile}`
             : data.mobile;
 
-        // const { name: collegeNameParsed, eiin: collegeEiin } = parseCollege(data.college);
-        // router.post(
-        //     route("execute.auth.hsc26mapregistration"),
-        //     {
-        //         name: `${data.firstName} ${data.lastName}`.trim(),
-        //         mobile: formattedMobile,
-        //         fb_id: data.facebook,
-        //         Hsc_Batch: (data.courseName.join(",")),
-        //         college: collegeNameParsed,
-        //         eiin: collegeEiin,
-        //         email: data.email,
-        //         address: data.feedback,
-        //         hsc26Mission: data.hsc26Mission
-        //     },
-        //     {
-        //         onSuccess: () =>
-        //             reset(),
+        
+        router.post(
+            route("execute.auth.hsc26mapregistration"),
+            {
+                name: `${data.firstName} ${data.lastName}`.trim(),
+                mobile: formattedMobile,
+                fb_id: data.facebook,
+                Hsc_Batch: (data.courseName.join(",")),
+                college: collegeNameParsed,
+                eiin: collegeEiin,
+                email: data.email,
+                address: data.feedback,
+                hsc26Mission: data.hsc26Mission
+            },
+            {
+                onSuccess: () =>
+                    reset(),
 
-        //     });
-        const payload = {
-            name: `${data.firstName} ${data.lastName}`.trim(),
-            mobile: formattedMobile,
-            fb_id: data.facebook,
-            Hsc_Batch: (data.courseName),
-            college: collegeNameParsed,
-            eiin: collegeEiin,
-            email: data.email,
-            address: data.feedback,
-            hsc26Mission: data.hsc26Mission
-        };
-        console.log(payload)
+            });
+        // const payload = {
+        //     name: `${data.firstName} ${data.lastName}`.trim(),
+        //     mobile: formattedMobile,
+        //     fb_id: data.facebook,
+        //     Hsc_Batch: (data.courseName),
+        //     college: collegeNameParsed,
+        //     eiin: collegeEiin,
+        //     email: data.email,
+        //     address: data.feedback,
+        //     hsc26Mission: data.hsc26Mission
+        // };
+        // console.log(payload);
 
     };
     const handleSelectCollege = (college) => {

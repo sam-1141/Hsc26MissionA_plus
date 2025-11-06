@@ -1,28 +1,32 @@
 import React, { useState, useEffect } from "react";
+import { router } from "@inertiajs/react";
 
 const RegistrationSuccess = ({ registration }) => {
     const [copied, setCopied] = useState(false);
     const [fadeIn, setFadeIn] = useState(false);
 
     useEffect(() => {
-        setFadeIn(true); // fade-in effect on mount
+        setFadeIn(true);
     }, []);
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(registration.unique_key_hscmap26)
             .then(() => {
                 setCopied(true);
-                setTimeout(() => setCopied(false), 2000); // reset after 2s
+                setTimeout(() => setCopied(false), 2000);
             })
             .catch(() => {
                 alert("Failed to copy. Please copy manually.");
             });
     };
 
+    const handleDownloadAdmit = () => {
+        router.visit(`/admit-card/${registration.unique_key_hscmap26}`);
+    };
+
     return (
         <div className={`min-h-screen flex items-center justify-center bg-gray-50 p-4 transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
             <div className="bg-white shadow-2xl rounded-3xl p-10 max-w-lg w-full text-center">
-
                 {/* Success Icon */}
                 <div className="flex justify-center mb-6">
                     <div className="bg-green-100 rounded-full p-4">
@@ -40,7 +44,7 @@ const RegistrationSuccess = ({ registration }) => {
                     Thank you, <span className="font-semibold">{registration.name}</span>, for registering.
                 </p>
 
-                {/* Unique Key Card */}
+                {/* Unique Key */}
                 <div
                     className="bg-gray-50 border-2 border-blue-300 p-8 rounded-2xl w-full cursor-pointer hover:bg-blue-50 transition duration-200 shadow-md"
                     onClick={copyToClipboard}
@@ -52,9 +56,17 @@ const RegistrationSuccess = ({ registration }) => {
                     <p className="text-sm text-gray-500 mt-2">{copied ? "Copied!" : "Click to copy"}</p>
                 </div>
 
+                {/* Download Admit Card Button */}
+                <button
+                    onClick={handleDownloadAdmit}
+                    className="mt-8 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow hover:bg-blue-700 transition"
+                >
+                    View / Download Admit Card
+                </button>
+
                 {/* Note */}
                 <p className="text-gray-500 text-sm mt-8">
-                    Please save this unique key. You may need it for verification or future reference.
+                    Please save this key. You may need it for future verification.
                 </p>
             </div>
         </div>

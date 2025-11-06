@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminLectureController;
 use App\Http\Controllers\AuthController;
 use
 App\Http\Controllers\Student\Hsc26MapRegistrationController;
+use App\Http\Controllers\Student\VideoController;
 
 
 
@@ -74,7 +75,10 @@ Route::controller(AuthController::class)->group(function () {
     Route::get("/HscMisssionA+/registration", "loadRegistrationForm")->name("auth.registration.form");
 Route::post('/register', [Hsc26MapRegistrationController::class, 'store'])
      ->name('execute.auth.hsc26mapregistration');
-    
+Route::get('/admit-card/{key}', [Hsc26MapRegistrationController::class, 'admitCard'])->name('admit.card');
+Route::get('/student/video', [VideoController::class, 'show'])->name('student.video');
+
+
    
 });
 // 🚫 Error pages
