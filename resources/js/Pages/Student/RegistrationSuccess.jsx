@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
+import TitleSlot  from "../authentication/TitleSlot";
 
 const RegistrationSuccess = ({ registration }) => {
     const [copied, setCopied] = useState(false);
@@ -27,6 +28,8 @@ const RegistrationSuccess = ({ registration }) => {
     return (
         <div className={`min-h-screen flex items-center justify-center bg-gray-50 p-4 transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
             <div className="bg-white shadow-2xl rounded-3xl p-10 max-w-lg w-full text-center">
+                <TitleSlot/>
+
                 {/* Success Icon */}
                 <div className="flex justify-center mb-6">
                     <div className="bg-green-100 rounded-full p-4">
@@ -41,7 +44,7 @@ const RegistrationSuccess = ({ registration }) => {
 
                 {/* User Name */}
                 <p className="text-gray-600 text-lg mb-6">
-                    Thank you, <span className="font-semibold">{registration.name}</span>, for registering.
+                    অভিনন্দন!, <span className="font-semibold">{registration.name}</span>, আপনার রেজিস্ট্রেশন সম্পন্ন হয়েছে।
                 </p>
 
                 {/* Unique Key */}
@@ -49,7 +52,7 @@ const RegistrationSuccess = ({ registration }) => {
                     className="bg-gray-50 border-2 border-blue-300 p-8 rounded-2xl w-full cursor-pointer hover:bg-blue-50 transition duration-200 shadow-md"
                     onClick={copyToClipboard}
                 >
-                    <p className="text-gray-700 font-medium mb-2 text-lg tracking-wide">Your Exam Roll</p>
+                    <p className="text-gray-700 font-medium mb-2 text-lg tracking-wide">Your Reistration No:</p>
                     <p className="text-5xl font-extrabold text-blue-700 font-mono tracking-widest select-all">
                         {registration.unique_key_hscmap26}
                     </p>

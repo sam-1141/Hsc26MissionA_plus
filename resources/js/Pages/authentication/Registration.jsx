@@ -3,6 +3,7 @@ import { Link, useForm, router } from "@inertiajs/react";
 import { toast, ToastContainer } from "react-toastify";
 import { useRoute } from "ziggy-js";
 import "./login.css";
+import TitleSlot from "./TitleSlot";
 import CollegeAutocomplete from "./CollegeAutocomplete";
 
 function Registration({ flash, errors }) {
@@ -41,8 +42,6 @@ function Registration({ flash, errors }) {
     const [collegesData, setCollegesData] = useState([]);
     const [coursesData, setCoursesData] = useState([]);
 
-
-
     useEffect(() => {
         fetch("/data/all_colleges.json")
             .then((res) => res.json())
@@ -55,7 +54,6 @@ function Registration({ flash, errors }) {
             .then((data) => setCoursesData(data))
             .catch((err) => console.error("Failed to load courses data:", err));
     }, []);
-
 
     const validateMobile = (value) => {
         const digitsOnly = value.replace(/\D/g, "").slice(0, 11);
@@ -82,45 +80,45 @@ function Registration({ flash, errors }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (mobileError || facebookError) return;
-        const { name: collegeNameParsed, eiin: collegeEiin } = parseCollege(data.college);
+        const { name: collegeNameParsed, eiin: collegeEiin } = parseCollege(
+            data.college
+        );
         if (!data.college || !collegeNameParsed) {
             toast.error("কলেজের নাম অবশ্যই নির্বাচন করতে হবে");
             return;
         }
-        if(!data.courseName){
-            toast.error("এইচএসসি ব্যাচ উল্লেখ করতে হবে।")
-            return
+        if (!data.courseName) {
+            toast.error("এইচএসসি ব্যাচ উল্লেখ করতে হবে।");
+            return;
         }
-        if(!data.feedback){
-            toast.error("🎁 উপহার পাঠানোর জন্য ঠিকানার ঘরটি সঠিকভাবে পূরণ করা জরুরি")
-            return
+        if (!data.feedback) {
+            toast.error(
+                "🎁 উপহার পাঠানোর জন্য ঠিকানার ঘরটি সঠিকভাবে পূরণ করা জরুরি"
+            );
+            return;
         }
-
-
 
         const formattedMobile = data.mobile.startsWith("01")
             ? `88${data.mobile}`
             : data.mobile;
 
-        
         router.post(
             route("execute.auth.hsc26mapregistration"),
             {
                 name: `${data.firstName} ${data.lastName}`.trim(),
                 mobile: formattedMobile,
                 fb_id: data.facebook,
-                Hsc_Batch: (data.courseName.join(",")),
+                Hsc_Batch: data.courseName.join(","),
                 college: collegeNameParsed,
                 eiin: collegeEiin,
                 email: data.email,
                 address: data.feedback,
-                hsc26Mission: data.hsc26Mission
+                hsc26Mission: data.hsc26Mission,
             },
             {
-                onSuccess: () =>
-                    reset(),
-
-            });
+                onSuccess: () => reset(),
+            }
+        );
         // const payload = {
         //     name: `${data.firstName} ${data.lastName}`.trim(),
         //     mobile: formattedMobile,
@@ -133,7 +131,6 @@ function Registration({ flash, errors }) {
         //     hsc26Mission: data.hsc26Mission
         // };
         // console.log(payload);
-
     };
     const handleSelectCollege = (college) => {
         const collegeName = college["কলেজের নাম"];
@@ -152,8 +149,6 @@ function Registration({ flash, errors }) {
         }));
     };
 
-
-
     useEffect(() => {
         if (flash.success) toast.success(flash.success);
         if (flash.error) toast.error(flash.error);
@@ -169,14 +164,18 @@ function Registration({ flash, errors }) {
                     <h2>ফাহাদ'স টিউটোরিয়াল-এ তোমাকে স্বাগতম</h2>
                     <h1>HSC 2026 Mission A+</h1>
                     <img src="/assets/images/auth.7b116a16.png" alt="Welcome" />
-
-                    
                 </div>
-
 
                 <div className="login-form">
                     <div className="border border-primary p-4 rounded shadow">
                         <form onSubmit={handleSubmit}>
+                            <div class="flex items-center justify-center bg-white py-4">
+                                <div class="flex items-center justify-center bg-white py-6">
+                                    <TitleSlot/>
+                                    
+                                </div>
+                            </div>
+
                             <h3>Registration Form</h3>
 
                             {/* নাম */}
@@ -259,7 +258,7 @@ function Registration({ flash, errors }) {
                             <CollegeAutocomplete
                                 label="কলেজের নাম"
                                 name="college"
-                                value={data.collegeDisplay || ""}  // Only show college name
+                                value={data.collegeDisplay || ""} // Only show college name
                                 onChange={(e) => {
                                     const inputName = e.target.value;
                                     setData("collegeDisplay", inputName);
@@ -271,9 +270,15 @@ function Registration({ flash, errors }) {
 
                                     // Store the full value for backend submission
                                     if (matchedCollege) {
-                                        setData("college", `${inputName} (EIIN: ${matchedCollege["EIIN"]})`);
+                                        setData(
+                                            "college",
+                                            `${inputName} (EIIN: ${matchedCollege["EIIN"]})`
+                                        );
                                     } else {
-                                        setData("college", `${inputName} (EIIN: 000000)`);
+                                        setData(
+                                            "college",
+                                            `${inputName} (EIIN: 000000)`
+                                        );
                                     }
                                 }}
                                 onSelect={handleSelectCollege}
@@ -281,38 +286,52 @@ function Registration({ flash, errors }) {
                                 required
                             />
 
-
-
-
                             {/* কোর্স */}
 
                             <p>এইচএসসি ব্যাচ:</p>
                             <select
                                 value={data.courseName[0] || ""}
-                                onChange={(e) => handleDropdownChange(e.target.value)}
+                                onChange={(e) =>
+                                    handleDropdownChange(e.target.value)
+                                }
                                 className="border border-gray-300 rounded-lg p-3 w-full mb-6 focus:ring-2 focus:ring-blue-400"
                             >
-                                <option value="" disabled>তোমার HSC ব্যাচ নির্বাচন কর</option>
+                                <option value="" disabled>
+                                    তোমার HSC ব্যাচ নির্বাচন কর
+                                </option>
                                 {coursesData.map((course) => (
-                                    <option key={course.name} value={course.name}>
+                                    <option
+                                        key={course.name}
+                                        value={course.name}
+                                    >
                                         {course.name}
                                     </option>
                                 ))}
                             </select>
 
                             {/* Mission 26 */}
-                            <p>তুমি কি আমাদের HSC 26 Mission A+ কোর্সে যুক্ত হয়েছো?? </p>
+                            <p>
+                                তুমি কি আমাদের HSC 26 Mission A+ কোর্সে যুক্ত
+                                হয়েছো??{" "}
+                            </p>
                             <select
                                 name="hsc26Mission"
                                 value={data.hsc26Mission}
-                                onChange={(e) => setData("hsc26Mission", e.target.value)}
-                                style={{ width: "100%", padding: "8px", marginBottom: "25px" }}
+                                onChange={(e) =>
+                                    setData("hsc26Mission", e.target.value)
+                                }
+                                style={{
+                                    width: "100%",
+                                    padding: "8px",
+                                    marginBottom: "25px",
+                                }}
                             >
                                 <option value="NO">না</option>
                                 <option value="YES">হ্যাঁ</option>
-                                <option value="WILL_BE">কিছুদিন পর ভর্তি হবো</option>
+                                <option value="WILL_BE">
+                                    কিছুদিন পর ভর্তি হবো
+                                </option>
                             </select>
-
 
                             {/* ফেসবুক */}
                             <label>
@@ -330,9 +349,7 @@ function Registration({ flash, errors }) {
                             />
 
                             {/* মতামত */}
-                            <label>
-                                বর্তমান ঠিকানা:
-                            </label>
+                            <label>বর্তমান ঠিকানা:</label>
                             <textarea
                                 name="feedback"
                                 placeholder="উপহার পাঠানোর জন্য ঠিকানার ঘরটি সঠিকভাবে পূরণ করা জরুরি।..."
@@ -370,7 +387,6 @@ function Registration({ flash, errors }) {
                                 </Link>
                             </div> */}
                         </form>
-
                     </div>
                 </div>
             </div>
@@ -379,9 +395,3 @@ function Registration({ flash, errors }) {
 }
 
 export default Registration;
-
-
-
-
-
-

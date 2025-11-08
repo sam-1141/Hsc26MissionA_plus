@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { router } from "@inertiajs/react";
 
 const AdmitCard = ({ registration }) => {
     const cardRef = useRef();
@@ -14,6 +15,7 @@ const AdmitCard = ({ registration }) => {
         const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
         pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
         pdf.save(`${registration.unique_key_hscmap26}_AdmitCard.pdf`);
+        router.get(route('student.video'));
     };
 
     return (
