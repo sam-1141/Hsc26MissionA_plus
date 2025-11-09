@@ -6,8 +6,7 @@ use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\CalculatorController;
 use App\Http\Controllers\AdminLectureController;
 use App\Http\Controllers\AuthController;
-use
-App\Http\Controllers\Student\Hsc26MapRegistrationController;
+use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 use App\Http\Controllers\Student\VideoController;
 
 
@@ -94,3 +93,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/lectures', [AdminLectureController::class, 'store'])->name('admin.lectures.store');
 });
 
+// Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+//     Route::get('video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'edit']);
+//     Route::post('video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'update']);
+// });
+// Route::middleware('auth')->group(function () {
+//     Route::get('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'edit']);
+//     Route::post('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'update']);
+// });
+
+Route::get('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'edit']);
+Route::post('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'update']);

@@ -14,7 +14,7 @@ const TitleSlot = ({
         <img
           src={logoSrc}
           alt={logoAlt}
-          className="h-16 sm:h-20 md:h-24 object-contain"
+          className="h-20 sm:h-24 md:h-28 object-contain"
         />
       </div>
 
