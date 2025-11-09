@@ -104,3 +104,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::get('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'edit']);
 Route::post('/video-settings', [\App\Http\Controllers\Admin\VideoSettingController::class, 'update']);
+use App\Http\Controllers\Admin\ExamInfoController;
+
+Route::get('/exam-info', [ExamInfoController::class, 'show'])->name('exam.info');
