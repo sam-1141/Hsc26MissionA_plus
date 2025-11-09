@@ -169,12 +169,12 @@ function Registration({ flash, errors }) {
                 <div className="login-form">
                     <div className="border border-primary p-4 rounded shadow">
                         <form onSubmit={handleSubmit}>
-                            <div class="flex items-center justify-center bg-white py-4">
-                                <div class="flex items-center justify-center bg-white py-6">
+                            {/* <div class="flex items-center justify-center bg-white py-4"> */}
+                                {/* <div class="flex items-center justify-center bg-white py-6"> */}
                                     <TitleSlot/>
                                     
-                                </div>
-                            </div>
+                                {/* </div> */}
+                            {/* </div> */}
 
                             <h3>Registration Form</h3>
 

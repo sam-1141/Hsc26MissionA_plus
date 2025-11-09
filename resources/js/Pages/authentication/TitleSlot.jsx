@@ -1,12 +1,32 @@
 // components/TitleSlot.jsx
 import React from "react";
 
-const TitleSlot = ({ logoAlt = "Logo", headline = "#One Mission, One Goal", subtitle = "Place for Logo" }) => {
+const TitleSlot = ({
+  logoSrc = "/assets/images/logo/title.png",
+  logoAlt = "Logo",
+  headline = "#One Mission, One Goal",
+  subtitle = "",
+}) => {
   return (
-    <div className="flex flex-col items-center justify-center bg-white py-4">
-      <h3 className="text-xl font-semibold text-gray-800">{subtitle}</h3>
+    <div className="flex flex-col items-center justify-center bg-white py-6">
+      {/* Logo Section */}
+      <div className="mb-4">
+        <img
+          src={logoSrc}
+          alt={logoAlt}
+          className="h-16 sm:h-20 md:h-24 object-contain"
+        />
+      </div>
 
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-snug mt-2">
+      {/* Optional Subtitle */}
+      {subtitle && (
+        <h3 className="text-lg sm:text-xl font-medium text-gray-600 mb-2">
+          {subtitle}
+        </h3>
+      )}
+
+      {/* Headline */}
+      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-snug">
         {headline.split(",").map((part, idx) => (
           <span
             key={idx}
