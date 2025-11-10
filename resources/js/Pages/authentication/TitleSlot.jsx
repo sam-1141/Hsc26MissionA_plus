@@ -10,23 +10,34 @@ const TitleSlot = ({
   return (
     <div className="flex flex-col items-center justify-center bg-white py-6">
       {/* Logo Section */}
-      <div className="mb-4">
+      <div className="mb-4 flex justify-center">
         <img
           src={logoSrc}
           alt={logoAlt}
-          className="h-20 sm:h-24 md:h-28 object-contain"
+          className="
+            w-[55vw]           /* larger on mobile */
+            max-w-[200px]      /* slightly larger cap for small devices */
+            sm:w-[45vw]
+            sm:max-w-[220px]
+            md:w-[35vw]
+            md:max-w-[240px]
+            lg:max-w-[260px]
+            object-contain
+            transition-all
+            duration-300
+          "
         />
       </div>
 
       {/* Optional Subtitle */}
       {subtitle && (
-        <h3 className="text-lg sm:text-xl font-medium text-gray-600 mb-2">
+        <h3 className="text-lg sm:text-xl font-medium text-gray-600 mb-2 text-center">
           {subtitle}
         </h3>
       )}
 
       {/* Headline */}
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-snug">
+      <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-snug">
         {headline.split(",").map((part, idx) => (
           <span
             key={idx}
