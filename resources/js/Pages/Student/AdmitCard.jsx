@@ -64,61 +64,65 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
         </div>
 
         {/* Info Fields */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-800">
-          <div className="space-y-2">
-            {isValid(registration.name) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">নাম:</span>
-                <span>{registration.name}</span>
-              </div>
-            )}
-            {isValid(registration.mobile) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">মোবাইল:</span>
-                <span>{registration.mobile}</span>
-              </div>
-            )}
-            {isValid(registration.email) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">ইমেল:</span>
-                <span>{registration.email}</span>
-              </div>
-            )}
-            {isValid(registration.college) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">কলেজ:</span>
-                <span>{registration.college}</span>
-              </div>
-            )}
-          </div>
+       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-800 shadow-sm p-5 rounded-lg border border-gray-200">
+  {/* Left Column */}
+  <div className="space-y-3">
+    {isValid(registration.name) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">Name</span>
+        <span className="text-gray-900">{registration.name}</span>
+      </div>
+    )}
+    {isValid(registration.mobile) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">Mobile No</span>
+        <span className="text-gray-900">+{registration.mobile}</span>
+      </div>
+    )}
+    {isValid(registration.college) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">College</span>
+        <span className="text-gray-900">{registration.college}</span>
+      </div>
+    )}
+    {isValid(registration.eiin) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">EIIN No</span>
+        <span className="text-gray-900">{registration.eiin}</span>
+      </div>
+    )}
+    {isValid(registration.email) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">E-Mail</span>
+        <span className="text-gray-900">{registration.email}</span>
+      </div>
+    )}
+  </div>
 
-          <div className="space-y-2">
-            {isValid(registration.Hsc_Batch) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">এইচএসসি ব্যাচ:</span>
-                <span>{registration.Hsc_Batch.slice(4)}</span>
-              </div>
-            )}
-            {isValid(registration.eiin) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">ইআইআইএন:</span>
-                <span>{registration.eiin}</span>
-              </div>
-            )}
-            {isValid(registration.address) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">ঠিকানা:</span>
-                <span>{registration.address}</span>
-              </div>
-            )}
-            {isValid(registration.hsc26Mission) && (
-              <div className="flex justify-between">
-                <span className="font-semibold">মিশন:</span>
-                <span>{registration.hsc26Mission}</span>
-              </div>
-            )}
-          </div>
-        </div>
+  {/* Right Column */}
+  <div className="space-y-3">
+    {isValid(registration.Hsc_Batch) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">HSC Batch</span>
+        <span className="text-gray-900">{registration.Hsc_Batch.slice(4)}</span>
+      </div>
+    )}
+    {isValid(registration.address) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">Address</span>
+        <span className="text-gray-900">{registration.address}</span>
+      </div>
+    )}
+    {/* Optional Mission field */}
+    {/* {isValid(registration.hsc26Mission) && (
+      <div className="flex justify-between items-center">
+        <span className="font-semibold text-gray-600">মিশন</span>
+        <span className="text-gray-900">{registration.hsc26Mission}</span>
+      </div>
+    )} */}
+  </div>
+</div>
+
 
         {/* Exam Roll */}
         <div className="mt-10 text-center">
@@ -196,23 +200,17 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
           <p>আপনার রেজিস্ট্রেশন নম্বর গোপন 🗝️ রাখুন।</p>
           <p>নির্ধারিত দিনে পরীক্ষায় অংশগ্রহণের জন্য এটি প্রয়োজন হবে।</p>
           {isValid(reg_link) && (
-            
-            <a
-              href={reg_link}
-              className="block text-blue-600 hover:text-blue-800 text-sm mt-3 break-all"
-            >
-              <span className="font-semibold text-gray-800">📜 Registration Link:</span>{" "}
-<a
-  href={reg_link}
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-blue-600 hover:underline break-all"
->
-  {reg_link}
-</a>
+  <a
+    href={reg_link}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="block text-blue-600 hover:text-blue-800 text-sm mt-3 break-all"
+  >
+    <span className="font-semibold text-gray-800">📜 Registration Link:</span>{" "}
+    {reg_link}
+  </a>
+)}
 
-            </a>
-          )}
         </div>
       </div>
 

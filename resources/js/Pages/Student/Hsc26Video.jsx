@@ -22,7 +22,7 @@ export default function Hsc26Video() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center px-2 md:px-6 py-4 overflow-hidden">
       <div className="w-full max-w-6xl bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-100">
-       
+
 
         {/* Title Slot */}
         <div className="bg-gray-50 border-b">
@@ -46,26 +46,35 @@ export default function Hsc26Video() {
             className="absolute inset-0 w-full h-full border-0 rounded-b-3xl"
           ></iframe>
         </div>
-
         {/* Message Section */}
         {message && (
-          <div className="px-6 py-5 border-t text-center bg-gray-50">
-            <p className="text-gray-700 text-lg leading-relaxed">
-              {message}
-            </p>
-          </div>
-        )}
+  <div className="px-6 py-6 border-t bg-gray-50 text-center">
+    <p
+      className="text-gray-700 text-lg leading-relaxed whitespace-pre-line font-medium"
+      style={{ wordBreak: "break-word" }}
+    >
+      {message}
+    </p>
+  </div>
+)}
+
 
         {/* Purchase Button */}
         {purchase_link && (
-          <div className="px-6 py-6 text-center bg-white">
+          <div className="px-6 py-8 text-center bg-gray-50 rounded-b-2xl">
+            {/* Prominent Label above button */}
+            <p className="text-lg md:text-xl font-bold text-blue-600 uppercase tracking-wide mb-3">
+              Join Now
+            </p>
+
+            {/* Button */}
             <a
               href={purchase_link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg font-medium shadow transition-transform transform hover:scale-105"
+              className="inline-block bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3 rounded-full text-lg md:text-xl font-semibold shadow-lg transition-transform transform hover:scale-105"
             >
-              💳 Purchase / Learn More
+              Hsc Mission A+
             </a>
           </div>
         )}
