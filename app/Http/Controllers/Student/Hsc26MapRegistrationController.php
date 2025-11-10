@@ -35,10 +35,15 @@ class Hsc26MapRegistrationController extends Controller
 
         $registration = Hsc26MapRegistration::create($validated);
 
-        return Inertia::render('Student/RegistrationSuccess', [
-            'registration' => $registration,
-        ]);
+        return redirect()->route('registration.success', ['registration' => $registration->id]);
     }
+    public function showSuccess(Hsc26MapRegistration $registration)
+{
+    return Inertia::render('Student/RegistrationSuccess', [
+        'registration' => $registration,
+    ]);
+}
+
 
     public function admitCard($key)
     {
