@@ -9,86 +9,59 @@ const AdmitCard = ({ registration, exam, examInfoUrl }) => {
   const cardRef = useRef();
 
   const handleDownload = async () => {
-    try {
-      const element = cardRef.current;
+  try {
+    const element = cardRef.current;
 
-      // Capture the card as an image
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-      const imgData = canvas.toDataURL("image/png");
+    // Capture the card as an image
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
+    const imgData = canvas.toDataURL("image/png");
 
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-      // --- Page 1: Admit Card Image ---
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    // Fit the image into the A4 page, keeping aspect ratio
+    const imgProps = {
+      width: canvas.width,
+      height: canvas.height,
+    };
+    const ratio = Math.min(pdfWidth / imgProps.width, pdfHeight / imgProps.height);
+    const imgWidth = imgProps.width * ratio;
+    const imgHeight = imgProps.height * ratio;
+    const x = (pdfWidth - imgWidth) / 2;
+    const y = (pdfHeight - imgHeight) / 2;
 
-      // --- Add clickable link overlay on top of the image ---
-      const linkUrl = exam?.exam_url
-        ? exam.exam_url.startsWith("http")
-          ? exam.exam_url
-          : `https://${exam.exam_url}`
-        : null;
+    // Add the admit card image to the PDF
+    pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
 
-      if (linkUrl) {
-        // Example: overlay rectangle on the exam roll number area
-        const rectWidth = pdfWidth * 0.8; // 80% of page width
-        const rectHeight = 20; // 20mm height
-        const rectX = pdfWidth * 0.1; // center horizontally
-        const rectY = pdfHeight * 0.6; // roughly where roll number is
+    // --- Add clickable link overlay ---
+    const linkUrl = exam?.exam_url
+      ? exam.exam_url.startsWith("http")
+        ? exam.exam_url
+        : `https://${exam.exam_url}`
+      : null;
 
-        pdf.link(rectX, rectY, rectWidth, rectHeight, { url: linkUrl });
-      }
-
-      // --- Page 2: Backup page with clickable text link ---
-      pdf.addPage();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(18);
-      const title = "অনলাইন পরীক্ষার লিংক";
-      const titleWidth = pdf.getTextWidth(title);
-      pdf.text(title, (pageWidth - titleWidth) / 2, 40);
-
-      if (linkUrl) {
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(14);
-        pdf.setTextColor(0, 0, 255);
-
-        const linkText = "🔗 এখানে ক্লিক করুন পরীক্ষায় অংশগ্রহণ করতে";
-        const linkWidth = pdf.getTextWidth(linkText);
-        const linkX = (pageWidth - linkWidth) / 2;
-        const linkY = 80;
-
-        pdf.text(linkText, linkX, linkY);
-        pdf.link(linkX, linkY - 5, linkWidth, 10, { url: linkUrl });
-      } else {
-        pdf.setTextColor(150, 0, 0);
-        pdf.setFontSize(14);
-        const msg = "❌ পরীক্ষার লিংক এখনো প্রকাশিত হয়নি";
-        const msgWidth = pdf.getTextWidth(msg);
-        pdf.text(msg, (pageWidth - msgWidth) / 2, 80);
-      }
-
-      // Optional note
-      pdf.setTextColor(100);
-      pdf.setFontSize(10);
-      const note = "এই লিংকটি শুধুমাত্র ডিজিটাল অ্যাডমিট কার্ডের জন্য ক্লিকযোগ্য।";
-      const noteWidth = pdf.getTextWidth(note);
-      pdf.text(note, (pageWidth - noteWidth) / 2, 100);
-
-      pdf.save(`${registration.unique_key_hscmap26}_AdmitCard.pdf`);
-
-      router.get(route("student.video"));
-    } catch (err) {
-      console.error("handleDownload error:", err);
-      alert("PDF তৈরিতে সমস্যা হয়েছে — কনসোলে দেখুন।");
+    if (linkUrl) {
+      // Approximate area for clickable link on the roll number
+      const rectWidth = imgWidth * 0.8;
+      const rectHeight = 20;
+      const rectX = x + (imgWidth - rectWidth) / 2;
+      const rectY = y + imgHeight * 0.6;
+      pdf.link(rectX, rectY, rectWidth, rectHeight, { url: linkUrl });
     }
-  };
+
+    pdf.save(`${registration.unique_key_hscmap26}_AdmitCard.pdf`);
+
+    router.get(route("student.video"));
+  } catch (err) {
+    console.error("handleDownload error:", err);
+    alert("PDF তৈরিতে সমস্যা হয়েছে — কনসোলে দেখুন।");
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gray-100 p-6">
