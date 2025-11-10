@@ -7,6 +7,8 @@ use App\Models\Hsc26MapRegistration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use App\Models\VideoSetting;
+use Illuminate\Support\Facades\Config;
 
 class Hsc26MapRegistrationController extends Controller
 {
@@ -42,8 +44,22 @@ class Hsc26MapRegistrationController extends Controller
     {
         $registration = Hsc26MapRegistration::where('unique_key_hscmap26', $key)->firstOrFail();
 
+        // Get the latest exam info
+        $exam = VideoSetting::select('exam_description_bn', 'exam_url')
+            ->latest('updated_at')
+            ->first();
+
+        // App base URL (works in dev and production)
+        $appUrl = rtrim(config('app.url'), '/');
+
+        // Generate full exam info URL
+        $examInfoUrl = $appUrl . route('exam.info', [], false);
+
         return Inertia::render('Student/AdmitCard', [
             'registration' => $registration,
+            'exam' => $exam,
+            // 'examInfoUrl' => $examInfoUrl,
+            'examInfoUrl' => "https://emojipedia.org/old-key"
         ]);
     }
 }
