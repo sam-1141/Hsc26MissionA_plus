@@ -45,7 +45,7 @@ class Hsc26MapRegistrationController extends Controller
         $registration = Hsc26MapRegistration::where('unique_key_hscmap26', $key)->firstOrFail();
 
         // Get the latest exam info
-        $exam = VideoSetting::select('exam_description_bn', 'exam_url')
+        $exam = VideoSetting::select('exam_description_bn', 'exam_url','title','video_url')
             ->latest('updated_at')
             ->first();
 
@@ -54,12 +54,15 @@ class Hsc26MapRegistrationController extends Controller
 
         // Generate full exam info URL
         $examInfoUrl = $appUrl . route('exam.info', [], false);
+        $reg_link = $appUrl . route('auth.registration.form', [], false);
+        $promo_page = $appUrl . route('student.video', [], false);
 
         return Inertia::render('Student/AdmitCard', [
             'registration' => $registration,
             'exam' => $exam,
-            // 'examInfoUrl' => $examInfoUrl,
-            'examInfoUrl' => "https://emojipedia.org/old-key"
+            'examInfoUrl' => $examInfoUrl,
+            'reg_link' =>$reg_link,
+            'promo_page' =>$promo_page,
         ]);
     }
 }

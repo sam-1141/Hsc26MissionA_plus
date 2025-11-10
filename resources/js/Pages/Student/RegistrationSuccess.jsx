@@ -69,7 +69,7 @@ const RegistrationSuccess = ({ registration }) => {
 
                 {/* Note */}
                 <p className="text-gray-500 text-sm mt-8">
-                    Please save this key. You may need it for future verification.
+                    অনুগ্রহ করে এই রেজিস্ট্রেশন নম্বর এবং ডাউনলোড করা অ্যাডমিট কার্ডটি নিরাপদ ও গোপন রাখুন। নির্ধারিত তারিখে পরীক্ষায় অংশগ্রহণের জন্য এটি প্রয়োজন হবে।
                 </p>
             </div>
         </div>
