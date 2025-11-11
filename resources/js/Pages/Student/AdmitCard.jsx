@@ -64,37 +64,37 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
         </div>
 
         {/* Info Fields */}
-       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-800 shadow-sm p-5 rounded-lg border border-gray-200">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-800 shadow-sm p-5 rounded-lg border border-gray-200">
   {/* Left Column */}
   <div className="space-y-3">
     {isValid(registration.name) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">Name</span>
-        <span className="text-gray-900">{registration.name}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">Name</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.name}</span>
       </div>
     )}
     {isValid(registration.mobile) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">Mobile No</span>
-        <span className="text-gray-900">+{registration.mobile}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">Mobile No</span>
+        <span className="flex-1 text-gray-900 break-words">+{registration.mobile}</span>
       </div>
     )}
     {isValid(registration.college) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">College</span>
-        <span className="text-gray-900">{registration.college}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">College</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.college}</span>
       </div>
     )}
     {isValid(registration.eiin) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">EIIN No</span>
-        <span className="text-gray-900">{registration.eiin}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">EIIN No</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.eiin}</span>
       </div>
     )}
     {isValid(registration.email) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">E-Mail</span>
-        <span className="text-gray-900">{registration.email}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">E-Mail</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.email}</span>
       </div>
     )}
   </div>
@@ -102,26 +102,21 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
   {/* Right Column */}
   <div className="space-y-3">
     {isValid(registration.Hsc_Batch) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">HSC Batch</span>
-        <span className="text-gray-900">{registration.Hsc_Batch.slice(4)}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">HSC Batch</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.Hsc_Batch.slice(4)}</span>
       </div>
     )}
     {isValid(registration.address) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">Address</span>
-        <span className="text-gray-900">{registration.address}</span>
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">Address</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.address}</span>
       </div>
     )}
-    {/* Optional Mission field */}
-    {/* {isValid(registration.hsc26Mission) && (
-      <div className="flex justify-between items-center">
-        <span className="font-semibold text-gray-600">মিশন</span>
-        <span className="text-gray-900">{registration.hsc26Mission}</span>
-      </div>
-    )} */}
   </div>
 </div>
+
+
 
 
         {/* Exam Roll */}
@@ -179,7 +174,7 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
     {isValid(promo_page) && (
       <div>
         <h2 className="text-xl font-semibold text-blue-700 mb-2">
-          🎓 Hsc 26 Missiona A+ (কোর্স লিংক)
+          🎓 Hsc 26 Mission A+ (কোর্স লিংক)
 :
         </h2>
         <a
