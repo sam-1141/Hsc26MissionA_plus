@@ -79,18 +79,13 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
         <span className="flex-1 text-gray-900 break-words">+{registration.mobile}</span>
       </div>
     )}
-    {isValid(registration.college) && (
-      <div className="flex">
-        <span className="w-32 font-semibold text-gray-600">College</span>
-        <span className="flex-1 text-gray-900 break-words">{registration.college}</span>
-      </div>
-    )}
-    {isValid(registration.eiin) && (
+    
+    {/* {isValid(registration.eiin) && (
       <div className="flex">
         <span className="w-32 font-semibold text-gray-600">EIIN No</span>
         <span className="flex-1 text-gray-900 break-words">{registration.eiin}</span>
       </div>
-    )}
+    )} */}
     {isValid(registration.email) && (
       <div className="flex">
         <span className="w-32 font-semibold text-gray-600">E-Mail</span>
@@ -101,6 +96,12 @@ const AdmitCard = ({ registration, exam, examInfoUrl,reg_link,promo_page }) => {
 
   {/* Right Column */}
   <div className="space-y-3">
+    {isValid(registration.college) && (
+      <div className="flex">
+        <span className="w-32 font-semibold text-gray-600">College</span>
+        <span className="flex-1 text-gray-900 break-words">{registration.college}</span>
+      </div>
+    )}
     {isValid(registration.Hsc_Batch) && (
       <div className="flex">
         <span className="w-32 font-semibold text-gray-600">HSC Batch</span>
