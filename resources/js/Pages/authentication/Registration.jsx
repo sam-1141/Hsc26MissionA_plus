@@ -182,19 +182,19 @@ function Registration({ flash, errors }) {
                             <div className="name-fields">
                                 <div>
                                     <label>
-                                        নামের প্রথম অংশ{" "}
+                                        নাম{" "}
                                         <span className="text-danger">*</span>
                                     </label>
                                     <input
                                         type="text"
                                         name="firstName"
-                                        placeholder="নামের প্রথম অংশ"
+                                        placeholder="নাম"
                                         value={data.firstName}
                                         onChange={handleChange}
                                         required
                                     />
                                 </div>
-                                <div>
+                                {/* <div>
                                     <label>
                                         নামের শেষ অংশ{" "}
                                         <span className="text-danger">*</span>
@@ -207,7 +207,7 @@ function Registration({ flash, errors }) {
                                         onChange={handleChange}
                                         required
                                     />
-                                </div>
+                                </div> */}
                             </div>
 
                             {/* ইমেইল */}
