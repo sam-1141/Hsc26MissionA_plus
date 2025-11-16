@@ -60,23 +60,54 @@ class AuthController extends Controller
     }
 
     // function for load login form
-    public function loadLoginForm(Request $req)
-    {
-        if (Auth::check()) {
-            return to_route('dashboard');
-        }
+    // public function loadLoginForm(Request $req)
+    // {
+    //     if (Auth::check()) {
+    //         return to_route('dashboard');
+    //     }
 
-        $redirect_url = $req->query('redirect');
-        if ($redirect_url) {
-            session(['redirect_url' => $redirect_url]);
-        }
+    //     $redirect_url = $req->query('redirect');
+    //     if ($redirect_url) {
+    //         session(['redirect_url' => $redirect_url]);
+    //     }
 
-        $core_app_registration_url = config('ftservices.core.auth.registration');
+    //     $core_app_registration_url = config('ftservices.core.auth.registration');
 
-        return Inertia::render('authentication/Login', ['core_app_registration_url' => $core_app_registration_url]);
-    }
+    //     return Inertia::render('authentication/Login', ['core_app_registration_url' => $core_app_registration_url]);
+    // }
 
     // function for load registration form
+
+    public function loadLoginForm(Request $req)
+{
+    // If already logged in → redirect based on role
+    if (Auth::check()) {
+        $user = Auth::user();
+
+        if ($user->role === 'admin') {
+            return to_route('live-exams.create');
+        }
+
+        if ($user->role === 'student') {
+            return to_route('student.dashboard');
+        }
+
+        return to_route('dashboard');
+    }
+
+    // Store redirect URL if provided
+    if ($req->has('redirect')) {
+        session(['redirect_url' => $req->query('redirect')]);
+    }
+
+    // Send environment variable to Inertia
+    $core_app_registration_url = config('ftservices.core.auth.registration');
+
+    return Inertia::render('authentication/Login', [
+        'core_app_registration_url' => $core_app_registration_url
+    ]);
+}
+
 
     public function loadRegistrationForm()
     {
@@ -187,96 +218,152 @@ class AuthController extends Controller
     }
 
     // function for login
-    public function login(Request $request)
+    // public function login(Request $request)
+    // {
+    //     $request->validate([
+    //         'login'    => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+
+    //     $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+    //     $user = User::where($loginField, $request->login)->first();
+
+    //     if (!$user || !password_verify($request->password, $user->password)) {
+    //         return redirect()->route('auth.login')
+    //                          ->with('error', 'ইমেইল/মোবাইল বা পাসওয়ার্ড সঠিক নয়।')
+    //                          ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    //                          ->header('Pragma', 'no-cache')
+    //                          ->header('Expires', '0');
+    //     }
+
+    //     if ($user->status != 1) {
+    //         Auth::logout();
+    //         return redirect()->route('auth.login')
+    //                          ->with('error', 'Your account is deactivated. Please contact the administrator.')
+    //                          ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    //                          ->header('Pragma', 'no-cache')
+    //                          ->header('Expires', '0');
+    //     }
+
+    //     Auth::login($user);
+    //     $request->session()->regenerate(); // prevent session fixation
+
+    //     // Setup secure, persistent cookie
+    //     $host = request()->getHost();
+    //     $domain = in_array($host, ['localhost', '127.0.0.1']) ? null : '.' . implode('.', array_slice(explode('.', $host), -2));
+    //     $secure = app()->environment('production');
+
+    //     $cookie = cookie(
+    //         'ft_roar',
+    //         $user->id,
+    //         60 * 24 * 7, // 7 days
+    //         '/',
+    //         $domain,
+    //         $secure,
+    //         true,   // HttpOnly for security
+    //         true,   // SameSite strict
+    //         'lax'
+    //     );
+
+    //     // Handle redirect_url safely
+    //     $redirectUrl = session()->pull('redirect_url');
+    //     if ($redirectUrl) {
+    //         $decodedUrl = base64_decode($redirectUrl, true);
+    //         if ($decodedUrl && filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
+    //             return response('', 409)
+    //                 ->header('X-Inertia-Location', $decodedUrl)
+    //                 ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    //                 ->header('Pragma', 'no-cache')
+    //                 ->header('Expires', '0')
+    //                 ->withCookie($cookie);
+    //         }
+    //     }
+
+    //     // Default intended route
+    //     $intended = session()->get('url.intended', route('dashboard'));
+    //     session(['url.intended' => route('dashboard')]);
+
+    //     return redirect($intended)
+    //         ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    //         ->header('Pragma', 'no-cache')
+    //         ->header('Expires', '0')
+    //         ->withCookie($cookie);
+    // }
+
+     public function login(Request $request)
     {
         $request->validate([
             'login'    => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'mobile';
+        $loginField = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+
         $user = User::where($loginField, $request->login)->first();
 
         if (!$user || !password_verify($request->password, $user->password)) {
-            return redirect()->route('auth.login')
-                             ->with('error', 'ইমেইল/মোবাইল বা পাসওয়ার্ড সঠিক নয়।')
-                             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                             ->header('Pragma', 'no-cache')
-                             ->header('Expires', '0');
+            return back()->with('error', 'Incorrect credentials.');
         }
 
         if ($user->status != 1) {
-            Auth::logout();
-            return redirect()->route('auth.login')
-                             ->with('error', 'Your account is deactivated. Please contact the administrator.')
-                             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                             ->header('Pragma', 'no-cache')
-                             ->header('Expires', '0');
+            return back()->with('error', 'Your account is deactivated.');
         }
 
         Auth::login($user);
-        $request->session()->regenerate(); // prevent session fixation
+        $request->session()->regenerate();
 
-        // Setup secure, persistent cookie
-        $host = request()->getHost();
-        $domain = in_array($host, ['localhost', '127.0.0.1']) ? null : '.' . implode('.', array_slice(explode('.', $host), -2));
-        $secure = app()->environment('production');
-
+        // set cookie
         $cookie = cookie(
             'ft_roar',
             $user->id,
-            60 * 24 * 7, // 7 days
+            60 * 24 * 7,
             '/',
-            $domain,
-            $secure,
-            true,   // HttpOnly for security
-            true,   // SameSite strict
+            null,
+            false,
+            true,
+            true,
             'lax'
         );
 
-        // Handle redirect_url safely
-        $redirectUrl = session()->pull('redirect_url');
-        if ($redirectUrl) {
-            $decodedUrl = base64_decode($redirectUrl, true);
-            if ($decodedUrl && filter_var($decodedUrl, FILTER_VALIDATE_URL)) {
-                return response('', 409)
-                    ->header('X-Inertia-Location', $decodedUrl)
-                    ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                    ->header('Pragma', 'no-cache')
-                    ->header('Expires', '0')
-                    ->withCookie($cookie);
-            }
+        // redirect based on role
+        if ($user->role === 'admin') {
+            return redirect()->route('live-exams.create')->withCookie($cookie);
         }
 
-        // Default intended route
-        $intended = session()->get('url.intended', route('dashboard'));
-        session(['url.intended' => route('dashboard')]);
+        if ($user->role === 'student') {
+            return redirect()->route('student.dashboard')->withCookie($cookie);
+        }
 
-        return redirect($intended)
-            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-            ->header('Pragma', 'no-cache')
-            ->header('Expires', '0')
-            ->withCookie($cookie);
+        return redirect()->route('dashboard')->withCookie($cookie);
     }
 
     public function logout(Request $request)
     {
-        // Forget custom cookie
-        $forgetCookie = Cookie::forget('ft_roar');
-
         Auth::logout();
-
-        // Invalidate session & regenerate token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        $request->session()->regenerate();
 
-        return redirect()->route('auth.login')
-            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-            ->header('Pragma', 'no-cache')
-            ->header('Expires', '0')
-            ->withCookie($forgetCookie);
+        return redirect()->route('auth.login');
     }
+
+    // public function logout(Request $request)
+    // {
+    //     // Forget custom cookie
+    //     $forgetCookie = Cookie::forget('ft_roar');
+
+    //     Auth::logout();
+
+    //     // Invalidate session & regenerate token
+    //     $request->session()->invalidate();
+    //     $request->session()->regenerateToken();
+    //     $request->session()->regenerate();
+
+    //     return redirect()->route('auth.login')
+    //         ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+    //         ->header('Pragma', 'no-cache')
+    //         ->header('Expires', '0')
+    //         ->withCookie($forgetCookie);
+    // }
 
     // method for verify otp
     public function verifyOtp(Request $req)

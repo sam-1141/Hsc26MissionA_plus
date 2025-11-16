@@ -54,7 +54,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
             login: formattedLogin,
         };
 
-        router.post(route("execute.auth.login"), submitValues);
+        router.post(route("auth.login.post"), submitValues);
     };
 
     return (

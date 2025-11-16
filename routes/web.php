@@ -9,6 +9,37 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Student\Hsc26MapRegistrationController;
 use App\Http\Controllers\Student\VideoController;
 
+use App\Http\Controllers\LiveExamController;
+
+Route::get('/login', [AuthController::class, 'loadLoginForm'])
+    ->name('auth.login');
+
+Route::post('/login', [AuthController::class, 'login'])
+    ->name('auth.login.post');
+
+Route::post('/logout', [AuthController::class, 'logout'])
+    ->name('auth.logout');
+
+// Admin panel
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', fn () => inertia('Admin/Dashboard'))
+        ->name('admin.dashboard');
+
+    Route::get('/live-exams/create', [LiveExamController::class, 'create'])
+        ->name('live-exams.create');
+
+    Route::post('/live-exams', [LiveExamController::class, 'store'])
+        ->name('live-exams.store');
+});
+
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/live-exams/create', [LiveExamController::class, 'create'])
+        ->name('live-exams.create');
+
+    Route::post('/live-exams', [LiveExamController::class, 'store'])
+        ->name('live-exams.store');
+});
 
 
 // 🏠 Root route — redirect to login if unauthenticated, otherwise dashboard
@@ -66,9 +97,9 @@ Route::get('/dashboard', function () {
 
 Route::controller(AuthController::class)->group(function () {
     // route for load login form
-    Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
-    Route::get('/logout', 'logout')->name('auth.logout');
-    // route for load forgot passwordForm
+    // Route::get("/HscMisssionA+/login", "loadLoginForm")->name("auth.login");
+    // Route::get('/logout', 'logout')->name('auth.logout');
+    // // route for load forgot passwordForm
     Route::get("/auth/forgot-password", "loadForgotPasswordForm")->name('auth.forgot.password');
     // route for load registration form
     Route::get("/HscMisssionA+/registration", "loadRegistrationForm")->name("auth.registration.form");
