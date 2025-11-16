@@ -2,20 +2,21 @@ import { useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 
 export default function Create() {
-    const { flash } = usePage().props;
+    const { flash, exam } = usePage().props;
 
     const [form, setForm] = useState({
-        name: "",
-        description: "",
-        total_questions: "",
-        has_negative_marks: false,
-        negative_marks_value: "",
-        total_marks: "",
-        duration: "",
-        start_time: "",
-        end_time: "",
-        result_publish_time: "",
-    });
+    name: exam?.name || "",
+    description: exam?.description || "",
+    total_questions: exam?.total_questions || "",
+    has_negative_marks: exam?.has_negative_marks ? true : false,
+    negative_marks_value: exam?.negative_marks_value || "",
+    total_marks: exam?.total_marks || "",
+    duration: exam?.duration || "",
+    start_time: exam?.start_time ? exam.start_time.replace(" ", "T") : "",
+    end_time: exam?.end_time ? exam.end_time.replace(" ", "T") : "",
+    result_publish_time: exam?.result_publish_time ? exam.result_publish_time.replace(" ", "T") : "",
+});
+
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;

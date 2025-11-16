@@ -9,9 +9,13 @@ use Inertia\Inertia;
 class LiveExamController extends Controller
 {
     public function create()
-    {
-        return Inertia::render('Admin/LiveExams/Create');
-    }
+{
+    $latestExam = LiveExam::latest()->first();
+
+    return Inertia::render('Admin/LiveExams/Create', [
+        'exam' => $latestExam
+    ]);
+}
 
     public function store(Request $request)
     {
