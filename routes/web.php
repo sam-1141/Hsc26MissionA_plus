@@ -39,6 +39,23 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     Route::post('/live-exams', [LiveExamController::class, 'store'])
         ->name('live-exams.store');
+
+    Route::controller(LiveExamController::class)->group(function () {
+            Route::post('/admin/live-exam/store', 'store')->name('execute.store.exam');
+            Route::get('/admin/live-exam/list', 'showAllExam')->name('show.exam.list');
+            Route::get('/admin/live-exams/{slug}', 'getSingleExam')->name('get.single.exam');
+            Route::put('/admin/live-exams/{slug}', 'updateExam')->name('update.single.exam');
+            Route::post('/admin/live-exams/questions', 'storeExamQuestion')->name('admin.exam.questions.store');
+            Route::put('/admin/live-exams/questions/{id}/update', 'updateExamQuestion')->name('admin.exam.questions.update');
+            Route::delete('/admin/live-exam/questions/{id}', 'destroyExamQuestion')->name('admin.exam.questions.destroy');
+            Route::put('/exams/{id}/toggle-status', 'toggleExamStatus')->name('exams.status.toggle');
+            Route::put('/exams/{id}/toggle-exam-type', 'toggleExamType')->name('exams.type.toggle');
+            Route::get('/add-exam', 'loadAddExamPage')->name('admin.add.exam');
+            Route::get('/add-exam/live-exam', 'loadAddLiveExamPage')->name('admin.add.live.exam');
+//            Route::post('/add-exam/live-exam', 'loadAddLiveExamPage')->name('admin.add.live.exam');
+            Route::get('/exams', 'loadViewExamDetails')->name('admin.exam.details');
+            Route::post('/live-exam/reorder-questions', 'reorderQuestions')->name('live.exam.reorder.questions');
+        });
 });
 
 
