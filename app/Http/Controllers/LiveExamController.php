@@ -69,8 +69,14 @@ class LiveExamController extends Controller
         //     ->get(['id', 'name']);
 
         $questions = DB::table('questions')
-            ->select('questions.*')
-            ->get();
+    
+    ->select('questions.*')
+    ->get();
+    
+
+      
+
+      
 
     
 

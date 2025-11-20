@@ -152,7 +152,7 @@ const QuestionList = ({
                                         Q{index + 1}:
                                     </span>
 
-                                    <div
+                                    <div className="font-sans"
                                         dangerouslySetInnerHTML={{
                                             __html: `
                                                 <div className="truncate">

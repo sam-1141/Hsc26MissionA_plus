@@ -21,9 +21,13 @@
     <meta name="keywords"
         content="Fahad's Tutorial, FT Academy, Fahad Sir, Exam" />
     <meta name="author" content="Fahad's Tutorial" />
-    <title>Hsc26 Misson A Plus|| Fahad's Tutorial</title>
+    <title>Hsc26 Misson A Plus| Fahad's Tutorial</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    <!-- Tailwind via CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.3/dist/tailwind.min.css" rel="stylesheet">
+    <!-- [Favicon] icon -->
+    <link rel="icon" href="{{ asset('assets/images/logo/favicon.webp') }}" type="image/x-icon" />
 
     <!-- [Favicon] icon -->
     <link rel="icon" href="{{ asset('assets/images/logo/favicon.webp') }}" type="image/x-icon" />
@@ -32,6 +36,8 @@
     <!-- [Font] Family -->
    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- [Font] Family -->
+    <link rel="stylesheet" href="{{ asset('assets/fonts/inter/inter.css') }}" id="main-font-link" />
      <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400..800&family=Noto+Sans+Bengali:wght@100..900&display=swap" rel="stylesheet">
     <!-- [Phosphor Icons] https://phosphoricons.com/ -->
     <link rel="stylesheet" href="{{ asset('assets/fonts/phosphor/duotone/style.css') }}" />

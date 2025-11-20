@@ -111,9 +111,9 @@ class AuthController extends Controller
 
     public function loadRegistrationForm()
     {
-        if (Auth::check()) {
-            return to_route('dashboard');
-        }
+        // if (Auth::check()) {
+        //     return to_route('dashboard');
+        // }
         // $classes = StudentClass::where('status', '1')->get();
         // $batches = Batch::where('status', '1')->get();
         $classes = '5';
