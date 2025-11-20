@@ -135,7 +135,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                 {flash?.error && <div>{flash.error}</div>}
                             </div>
 
-                            <div className="forgot-password text-start mt-3">
+                            {/* <div className="forgot-password text-start mt-3">
                                 <a
                                     href="https://webapp.ft.education/auth/forgot-password"
 
@@ -143,7 +143,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                 >
                                     পাসওয়ার্ড ভুলে গিয়েছো?
                                 </a>
-                            </div>
+                            </div> */}
 
                             <button type="submit" className="login-btn fw-bold mt-3">
                                 লগ ইন
@@ -162,7 +162,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
 
                             <hr />
 
-                            <p className="error-message fst-italic mt-3">
+                            {/* <p className="error-message fst-italic mt-3">
                                 পুনঃস্মরণ: তুমি যদি কখনো পাসওয়ার্ড সেট না করে থাকো, তাহলে তোমার পাসওয়ার্ড সেট করতে{" "}
                                 <span className="forgot-password">
                                     <a
@@ -173,7 +173,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                                         এখানে রেজিস্ট্রেশন করো
                                     </a>
                                 </span>
-                            </p>
+                            </p> */}
 
                         </form>
                     </div>

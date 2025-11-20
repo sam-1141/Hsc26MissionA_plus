@@ -13,41 +13,57 @@ use Illuminate\Support\Facades\Config;
 class Hsc26MapRegistrationController extends Controller
 {
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'mobile' => 'required|string|max:20',
-            'fb_id' => 'nullable|string|max:255',
-            'college' => 'required|string|max:255',
-            'eiin' => 'nullable|string|max:50',
-            'Hsc_Batch' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
-            'address' => 'nullable|string',
-            'hsc26Mission' => 'required|string',
-            'achieved_mark' => 'nullable|integer',
-        ]);
-
-        $baseString = $validated['mobile'].'|'.($validated['email'] ?? Str::random(6));
-
-        $hash = substr(md5($baseString), 0, 6);
-
-        $validated['unique_key_hscmap26'] = 'FT_'.strtoupper($hash); // e.g. FT_A9C4F2
-
-        $registration = Hsc26MapRegistration::create($validated);
-
-        return redirect()->route('registration.success', ['registration' => $registration->id]);
-    }
-    public function showSuccess(Hsc26MapRegistration $registration)
 {
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'mobile' => 'required|string|max:20|unique:hsc26_map_registrations,mobile',
+        'fb_id' => 'nullable|string|max:255',
+        'college' => 'required|string|max:255',
+        'eiin' => 'nullable|string|max:50',
+        'Hsc_Batch' => 'required|string|max:255',
+        'email' => 'nullable|email|max:255',
+        'address' => 'nullable|string',
+        'hsc26Mission' => 'required|string',
+        'achieved_mark' => 'nullable|integer',
+    ], [
+        'mobile.unique' => 'This phone number is already registered. Try another.',
+    ]);
+
+    $baseString = $validated['mobile'].'|'.($validated['email'] ?? Str::random(6));
+    $hash = substr(md5($baseString), 0, 6);
+    $validated['unique_key_hscmap26'] = 'FT_' . strtoupper($hash);
+
+    $registration = Hsc26MapRegistration::create($validated);
+
+    session(['registration_id' => $registration->id]);
+
+    return redirect()->route('registration.success');
+}
+
+
+
+    public function showSuccess()
+{
+    $id = session('registration_id');
+
+    if (!$id) {
+        return redirect()->route('auth.registration.form'); // Direct access not allowed
+    }
+
+    $registration = Hsc26MapRegistration::findOrFail($id);
+
     return Inertia::render('Student/RegistrationSuccess', [
-        'registration' => $registration,
+        'registration' => $registration
     ]);
 }
 
 
-    public function admitCard($key)
+
+    public function admitCard()
     {
-        $registration = Hsc26MapRegistration::where('unique_key_hscmap26', $key)->firstOrFail();
+        $id = session('registration_id');
+
+        $registration = Hsc26MapRegistration::where('id', $id)->firstOrFail();
 
         // Get the latest exam info
         $exam = VideoSetting::select('exam_description_bn', 'exam_url','title','video_url')

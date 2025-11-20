@@ -11,15 +11,23 @@ class VideoSettingController extends Controller
 {
     public function edit()
     {
-        $setting = VideoSetting::first();
+        $user = auth()->user();
+        if ($user->role == 'admin') {
+            
+            $setting = VideoSetting::latest('updated_at')->first();
 
-        return Inertia::render('Admin/VideoSettingEdit', [
-            'setting' => $setting
-        ]);
+            return Inertia::render('Admin/VideoSettingEdit', [
+                'setting' => $setting
+            ]);
+        } else {
+
+        }
     }
 
     public function update(Request $request)
     {
+        $user = auth()->user();
+        if ($user->role == 'admin'){
         $validated = $request->validate([
             'title' => 'nullable|string|max:255',
             'video_url' => 'required|url',
@@ -30,7 +38,8 @@ class VideoSettingController extends Controller
             'exam_url' => 'nullable|url',
         ]);
 
-        $setting = VideoSetting::first();
+        $setting = VideoSetting::latest('updated_at')->first();
+
 
         if ($setting) {
             $setting->update($validated);
@@ -39,5 +48,9 @@ class VideoSettingController extends Controller
         }
 
         return back()->with('success', 'Video settings updated successfully!');
+    }
+    else{
+
+    }
     }
 }

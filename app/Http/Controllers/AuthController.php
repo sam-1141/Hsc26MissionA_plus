@@ -85,14 +85,12 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'admin') {
-            return to_route('live-exams.create');
+            return to_route('show.video.settings');
         }
 
-        if ($user->role === 'student') {
-            return to_route('student.dashboard');
-        }
+        
 
-        return to_route('dashboard');
+        return to_route('auth.login');
     }
 
     // Store redirect URL if provided
@@ -316,7 +314,7 @@ class AuthController extends Controller
         $cookie = cookie(
             'ft_roar',
             $user->id,
-            60 * 24 * 7,
+            60 ,
             '/',
             null,
             false,
@@ -327,23 +325,33 @@ class AuthController extends Controller
 
         // redirect based on role
         if ($user->role === 'admin') {
-            return redirect()->route('live-exams.create')->withCookie($cookie);
+            return redirect()->route('show.video.settings')->withCookie($cookie);
         }
 
-        if ($user->role === 'student') {
-            return redirect()->route('student.dashboard')->withCookie($cookie);
-        }
+        // if ($user->role === 'student') {
+        //     return redirect()->route('student.dashboard')->withCookie($cookie);
+        // }
 
-        return redirect()->route('dashboard')->withCookie($cookie);
+        // return redirect()->route('dashboard')->withCookie($cookie);
     }
 
     public function logout(Request $request)
     {
+        // Forget custom cookie
+        $forgetCookie = Cookie::forget('ft_roar');
+
         Auth::logout();
+
+        // Invalidate session & regenerate token
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        $request->session()->regenerate();
 
-        return redirect()->route('auth.login');
+        return redirect()->route('auth.login')
+            ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0')
+            ->withCookie($forgetCookie);
     }
 
     // public function logout(Request $request)

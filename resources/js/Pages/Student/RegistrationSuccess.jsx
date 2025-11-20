@@ -22,7 +22,7 @@ const RegistrationSuccess = ({ registration }) => {
     };
 
     const handleDownloadAdmit = () => {
-        router.visit(`/admit-card/${registration.unique_key_hscmap26}`);
+        router.visit(`/admit-card`);
     };
 
     return (
