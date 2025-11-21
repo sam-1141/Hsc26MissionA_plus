@@ -6,11 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\VideoSetting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth; 
 
 class VideoSettingController extends Controller
 {
     public function edit()
     {
+        if (!Auth::check()) {
+            return back()->with('error', 'You must be logged in.');
+        }
         $user = auth()->user();
         if ($user->role == 'admin') {
             
@@ -20,6 +24,7 @@ class VideoSettingController extends Controller
                 'setting' => $setting
             ]);
         } else {
+            return redirect()->route('auth.login');
 
         }
     }
@@ -50,6 +55,7 @@ class VideoSettingController extends Controller
         return back()->with('success', 'Video settings updated successfully!');
     }
     else{
+        return redirect()->route('auth.login');
 
     }
     }
