@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { router } from "@inertiajs/react";
-import TitleSlot  from "../authentication/TitleSlot";
+import TitleSlot from "../authentication/TitleSlot";
 
 const RegistrationSuccess = ({ registration }) => {
     const [copied, setCopied] = useState(false);
@@ -28,7 +28,7 @@ const RegistrationSuccess = ({ registration }) => {
     return (
         <div className={`min-h-screen flex items-center justify-center bg-gray-50 p-4 transition-opacity duration-700 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
             <div className="bg-white shadow-2xl rounded-3xl p-10 max-w-lg w-full text-center">
-                <TitleSlot/>
+                <TitleSlot />
 
                 {/* Success Icon */}
                 <div className="flex justify-center mb-6">
@@ -49,15 +49,16 @@ const RegistrationSuccess = ({ registration }) => {
 
                 {/* Unique Key */}
                 <div
-                    className="bg-gray-50 border-2 border-blue-300 p-8 rounded-2xl w-full cursor-pointer hover:bg-blue-50 transition duration-200 shadow-md"
+                    className="bg-gray-50 border-2 border-blue-300 p-6 sm:p-8 rounded-2xl w-full cursor-pointer hover:bg-blue-50 transition duration-200 shadow-md"
                     onClick={copyToClipboard}
                 >
-                    <p className="text-gray-700 font-medium mb-2 text-lg tracking-wide">Your Reistration No:</p>
-                    <p className="text-5xl font-extrabold text-blue-700 font-mono tracking-widest select-all">
+                    <p className="text-gray-700 font-medium mb-2 text-lg tracking-wide">Your Registration No:</p>
+                    <p className="text-4xl sm:text-5xl font-extrabold text-blue-700 font-mono tracking-widest select-all break-all">
                         {registration.unique_key_hscmap26}
                     </p>
                     <p className="text-sm text-gray-500 mt-2">{copied ? "Copied!" : "Click to copy"}</p>
                 </div>
+
 
                 {/* Download Admit Card Button */}
                 <button
