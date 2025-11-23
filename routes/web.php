@@ -20,6 +20,7 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('/video-settings', 'edit')->name('show.video.settings');
         Route::post('/video-settings', 'update')->name('store.video.settings');
+        Route::get('/dashboard', 'showStudentDashboard')->name('student.dashboard');
 
     });
 
