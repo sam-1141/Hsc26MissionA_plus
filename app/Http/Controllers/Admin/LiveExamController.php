@@ -1,7 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Http\Controllers\Admin;
+use App\Http\Controllers\Controller;
 use App\Models\LiveExam;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -106,4 +106,92 @@ class LiveExamController extends Controller
             'questions' => $questions,
         ]);
     }
+
+    public function updateExamQuestion(Request $request, $id)
+    {
+        $data = $request->validate([
+            'question'   => ['required', 'string'],
+            'options'    => ['required', 'array'],
+            'explanation'=> ['nullable', 'string'],
+        ]);
+
+        try {
+            DB::table('questions')->where('id', $id)->update([
+                'question'    => $data['question'],
+                'options'     => json_encode($data['options']),
+                'explanation' => $data['explanation'],
+                'updated_at'  => now(),
+            ]);
+
+            return back()->with('success', 'Question updated.');
+        } catch (\Throwable $e) {
+            return back()->withErrors(['failed' => "Question couldn't be updated."]);
+        }
+    }
+
+
+    public function storeExamQuestion(Request $request)
+    {
+        $data = $request->validate([
+            'examId'             => ['required', 'integer'],
+            'question'            => ['required', 'string'],
+            'options'             => ['required', 'array'],
+            'explanation'         => ['nullable', 'string'],
+            'subject_name'        =>['nullable', 'string'],
+        ]);
+        // dd($data);
+        // $data['subject_name']='ok';
+
+        DB::beginTransaction();
+        try {
+            $questionId = DB::table('questions')->insertGetId([
+                'subject_name'        =>$data['subject_name'],
+                'question'    => $data['question'],
+                'options'     => json_encode($data['options']),
+                'explanation' => $data['explanation'],
+                'created_by'  => auth()->id(),
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ]);
+
+            // DB::table('exam_question')->insert([
+            //     'exam_id'     => (int) $data['examId'],
+            //     'question_id' => (int) $questionId,
+            // ]);
+
+            DB::commit();
+            return back()->with('success', 'Question added.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            return back()->withErrors(['failed' => "Question couldn't be added."]);
+        }
+    }
+
+    public function destroyExamQuestion($id)
+    {
+        DB::table('questions')->where('id', $id)->delete();
+
+        return response()->json(['success' => true, 'message' => 'Question deleted successfully']);
+    }
+    public function reorderQuestions(Request $request)
+    {
+        $questions = $request->questions;
+
+        if (!is_array($questions)) {
+            return response()->json(['message' => 'Invalid payload format.'], 400);
+        }
+
+        foreach ($questions as $index => $question) {
+            if (!isset($question['id'])) continue;
+
+            DB::table('questions')
+                ->where('id', $question['id'])
+                ->update(['serial' => $index + 1]);
+        }
+
+        return response()->json(['message' => 'Serials updated successfully.']);
+    }
+
+
 }

@@ -11,6 +11,7 @@ const QuestionList = ({
     onQuestionAdded,
     onQuestionUpdated,
 }) => {
+    console.log("here from questionlist"+ examId);
     const [expandedQuestion, setExpandedQuestion] = useState(null);
     const [questions, setQuestions] = useState(initialQuestions);
     const [showReorderModal, setShowReorderModal] = useState(false);
@@ -30,6 +31,7 @@ const QuestionList = ({
             });
 
             // console.log('response', response);
+            console.log(examId+"from qustionlist");
             alert("Order saved successfully!");
         } catch (error) {
             alert("Failed to save order");
@@ -99,7 +101,7 @@ const QuestionList = ({
     };
 
     const parseOptions = (optionsString) => {
-        console.log("Raw options string:", optionsString); // 👈 debug here
+        
 
         try {
             return JSON.parse(optionsString);
@@ -149,7 +151,7 @@ const QuestionList = ({
                                     }
                                 >
                                     <span className="me-2 font-medium">
-                                        Q{index + 1}:
+                                        Q{index + 1}: {question.subject_name}
                                     </span>
 
                                     <div className="font-sans"

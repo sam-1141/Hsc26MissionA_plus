@@ -54,7 +54,7 @@
     <script src="{{ asset('assets/js/tech-stack.js') }}"></script>
 
     <!-- Place the first <script> tag in your HTML's <head> -->
-    <script src="https://cdn.tiny.cloud/1/70htrxakgcutumxrbih9esenggrftsameyj6mrr7bicmblrx/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+    <script src="https://cdn.tiny.cloud/1/vr0rtuvhk1i0pjs78qsg5qyjfr6ois1s09zeeywa6vj44sqy/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
 
     <script>
         tinymce.init({
