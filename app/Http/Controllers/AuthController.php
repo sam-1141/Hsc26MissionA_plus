@@ -85,7 +85,10 @@ class AuthController extends Controller
         $user = Auth::user();
 
         if ($user->role === 'admin') {
-            return to_route('show.video.settings');
+            return to_route('student.dashboard');
+        }
+        if ($user->role === 'student'){
+            return to_route('student.exam.notice');
         }
 
         

@@ -11,6 +11,7 @@ use App\Http\Controllers\Student\VideoController;
 use App\Http\Controllers\Admin\ExamInfoController;
 use App\Http\Controllers\Admin\LiveExamController;
 use \App\Http\Controllers\Admin\VideoSettingController;
+use App\Http\Controllers\Student\StudentLiveExamController;
 
 
 
@@ -23,8 +24,8 @@ Route::middleware(['auth', 'admin'])
     ->group(function () {
 
         Route::controller(LiveExamController::class)->group(function () {
-            Route::post('/admin/live-exam/store', 'store')->name('execute.store.exam');
-            Route::get('/admin/live-exam/list', 'showAllExam')->name('show.exam.list');
+            Route::post('/live-exam/store', 'store')->name('live-exams.store');
+            Route::get('/live-exams/create', 'create')->name('admin.live-exams.create');
             Route::get('/admin/live-exams/{slug}', 'getSingleExam')->name('get.single.exam');
             Route::put('/admin/live-exams/{slug}', 'updateExam')->name('update.single.exam');
             Route::post('/admin/live-exams/questions', 'storeExamQuestion')->name('admin.exam.questions.store');
@@ -41,8 +42,28 @@ Route::middleware(['auth', 'admin'])
         
 
     });
+
+Route::middleware(['auth', 'student'])
+    ->prefix('student')
+    ->controller(VideoSettingController::class)
+    ->group(function () {
+
+
+            Route::controller(StudentLiveExamController::class)->group(function () {
+            Route::get('/live-exam/list', 'loadExamListPage')->name('student.live.exam.list');
+            Route::get('/exam/notice', 'loadExamNoticePage')->name('student.exam.notice');
+            Route::get('/exam', 'loadExamMainPage')->name('student.live.exam.main');
+            Route::post('/student/exam', 'submitExamMainPage')->name('student.live.exam.main.submit');
+            Route::post('/student/{exam}/violation/rules', 'submitTabSwitchCount')->name('student.live.exam.tab.switch.count');
+            Route::get('/student/live-exam/success', 'loadExamSuccessPage')->name('student.live.exam.success');
+            Route::post('/student/exams/answers','answerStore')->name('student.exam.answer.store');
+        });
+
+
+
         
 
+    });
 
 
 

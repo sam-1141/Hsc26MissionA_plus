@@ -40,7 +40,7 @@ class LiveExamController extends Controller
         LiveExam::create($validated);
 
         return redirect()
-            ->route('live-exams.create')
+            ->route('admin.live-exams.create')
             ->with('success', 'Live exam created successfully.');
     }
 
