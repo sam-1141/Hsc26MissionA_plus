@@ -40,6 +40,20 @@ export default function ExamNotice({ description }) {
             >
                 Start Exam
             </Link>
+            <Link
+                href={route("student.delete.exam")}
+                style={{
+                    display: "inline-block",
+                    padding: "10px 18px",
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    borderRadius: "4px",
+                    textDecoration: "none",
+                    fontSize: "16px",
+                }}
+            >
+                clear all
+            </Link>
         </div>
     );
 }
