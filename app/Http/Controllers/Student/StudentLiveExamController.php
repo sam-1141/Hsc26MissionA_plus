@@ -181,7 +181,7 @@ class StudentLiveExamController extends Controller
 
     public function answerStore(Request $request)
     {
-        Log::info('Request:', ['Request' => $request]);
+        // Log::info('Request:', ['Request' => $request]);
         $data = $request->validate([
             'exam_id' => ['required', 'integer'],
             'question_id' => ['required', 'integer'],
@@ -200,12 +200,12 @@ class StudentLiveExamController extends Controller
         $exam = DB::table('live_exams')->where('id', $examId)->first();
         $negativeMark = $exam->negative_marks_value ?? 0;
 
-        Log::debug('Exam data: ', [
-            'negativeMark' => $negativeMark,
-            'negativeMark_type' => gettype($negativeMark),
-            'answerMark' => $answerMark,
-            'answerMark_type' => gettype($answerMark),
-        ]);
+        // Log::debug('Exam data: ', [
+        //     'negativeMark' => $negativeMark,
+        //     'negativeMark_type' => gettype($negativeMark),
+        //     'answerMark' => $answerMark,
+        //     'answerMark_type' => gettype($answerMark),
+        // ]);
 
         $seaId = DB::table('student_exam_attendance')
             ->where('student_id', $studentId)
@@ -217,10 +217,10 @@ class StudentLiveExamController extends Controller
             ->where('exam_id', $examId)
             ->where('question_id', $questionId)
             ->first();
-        \Log::info('Prev answer:', ['panswer' => $previousAnswer]);
-        \Log::info('Prev answer:', ['ansgiven' => $ansGiven]);
+        // \Log::info('Prev answer:', ['panswer' => $previousAnswer]);
+        // \Log::info('Prev answer:', ['ansgiven' => $ansGiven]);
         if ($previousAnswer && ($previousAnswer->ans_given == $ansGiven || $ansGiven == -1))
- {
+ { 
             DB::table('see_answer')->where([
                 'student_id' => $studentId,
                 'exam_id' => $examId,
@@ -229,9 +229,9 @@ class StudentLiveExamController extends Controller
             DB::table('student_exam_attendance')
                 ->where('id', $seaId)
                 ->increment('total_skipped_answers');
-            // \Log::info('Prev is correct or not :', ['prve co0rrect ' => $previousAnswer->isCorrect]);
+            // \Log::info('Prev is correct or not :', ['prve co0rrect ' => $previousAnswer->is_correct]);
 
-            if ($isCorrect) {
+            if ($previousAnswer->is_correct) {
                 DB::table('student_exam_attendance')
                     ->where('id', $seaId)
                     ->decrement('student_total_mark', $answerMark);
