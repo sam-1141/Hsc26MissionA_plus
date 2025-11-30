@@ -79,36 +79,33 @@ class AuthController extends Controller
     // function for load registration form
 
     public function loadLoginForm(Request $req)
-{
-    // If already logged in → redirect based on role
-    if (Auth::check()) {
-        $user = Auth::user();
+    {
+        // If already logged in → redirect based on role
+        if (Auth::check()) {
+            $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return to_route('student.dashboard');
+            if ($user->role === 'admin') {
+                return to_route('student.dashboard');
+            }
+            if ($user->role === 'student') {
+                return to_route('student.exam.notice');
+            }
+
+            return to_route('auth.login');
         }
-        if ($user->role === 'student'){
-            return to_route('student.exam.notice');
+
+        // Store redirect URL if provided
+        if ($req->has('redirect')) {
+            session(['redirect_url' => $req->query('redirect')]);
         }
 
-        
+        // Send environment variable to Inertia
+        $core_app_registration_url = config('ftservices.core.auth.registration');
 
-        return to_route('auth.login');
+        return Inertia::render('authentication/Login', [
+            'core_app_registration_url' => $core_app_registration_url
+        ]);
     }
-
-    // Store redirect URL if provided
-    if ($req->has('redirect')) {
-        session(['redirect_url' => $req->query('redirect')]);
-    }
-
-    // Send environment variable to Inertia
-    $core_app_registration_url = config('ftservices.core.auth.registration');
-
-    return Inertia::render('authentication/Login', [
-        'core_app_registration_url' => $core_app_registration_url
-    ]);
-}
-
 
     public function loadRegistrationForm()
     {
@@ -179,7 +176,6 @@ class AuthController extends Controller
         ]);
 
         try {
-
             $existing_user = User::where('mobile', $validated['mobile'])
                 ->first();
 
@@ -209,7 +205,7 @@ class AuthController extends Controller
 
             return to_route('load.otp.form')->with([
                 'user_id' => $user->id,
-                'message' => 'তোমার <strong>'.$validated['mobile'].'</strong> নম্বরে ৪ ডিজিটের OTP পাঠানো হয়েছে। অ্যাকাউন্ট ভেরিফাই ও পাসওয়ার্ড সেট করতে OTP টি নিচে লিখো।',
+                'message' => 'তোমার <strong>' . $validated['mobile'] . '</strong> নম্বরে ৪ ডিজিটের OTP পাঠানো হয়েছে। অ্যাকাউন্ট ভেরিফাই ও পাসওয়ার্ড সেট করতে OTP টি নিচে লিখো।',
             ]);
         } catch (\Exception $e) {
             return $e;
@@ -291,10 +287,10 @@ class AuthController extends Controller
     //         ->withCookie($cookie);
     // }
 
-     public function login(Request $request)
+    public function login(Request $request)
     {
         $request->validate([
-            'login'    => 'required|string',
+            'login' => 'required|string',
             'password' => 'required|string',
         ]);
 
@@ -309,6 +305,14 @@ class AuthController extends Controller
         if ($user->status != 1) {
             return back()->with('error', 'Your account is deactivated.');
         }
+        // If user is already logged in from another device
+        if ($user->logged_in == 1 && $user->role === 'student') {
+            return back()->with('error', 'You are already logged in. Please contact the helpline.');
+        }
+
+        // Otherwise mark the user as logged in
+        $user->logged_in = 1;
+        $user->save();
 
         Auth::login($user);
         $request->session()->regenerate();
@@ -317,7 +321,7 @@ class AuthController extends Controller
         $cookie = cookie(
             'ft_roar',
             $user->id,
-            60 ,
+            60,
             '/',
             null,
             false,
@@ -340,6 +344,14 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+
+         $user = Auth::user();
+         if ($user->role === 'student') {
+            
+            $user->logged_in = 0;
+            $user->save();
+        }
+        
         // Forget custom cookie
         $forgetCookie = Cookie::forget('ft_roar');
 
@@ -350,7 +362,8 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         $request->session()->regenerate();
 
-        return redirect()->route('auth.login')
+        return redirect()
+            ->route('auth.login')
             ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0')
@@ -384,7 +397,6 @@ class AuthController extends Controller
         ]);
 
         try {
-
             $user = TempUser::where('id', $req->user_id)->first();
 
             // return $this->isOtpValid($user, $req->otp);
@@ -446,7 +458,7 @@ class AuthController extends Controller
             $temp_user->delete();
 
             $token = $user->id;
-            $domain = '.'.implode('.', array_slice(explode('.', request()->getHost()), -2));
+            $domain = '.' . implode('.', array_slice(explode('.', request()->getHost()), -2));
 
             $cookie = cookie(
                 'ft_roar',
@@ -484,7 +496,7 @@ class AuthController extends Controller
             $role = $user->role;
 
             // Check if the old password matches the one in the database
-            if (! Hash::check($req->oldPassword, $user->password)) {
+            if (!Hash::check($req->oldPassword, $user->password)) {
                 if ($role == 'solver') {
                     return to_route('solver.profile')->with('error', 'The provided old password is incorrect.');
                 }
@@ -540,7 +552,7 @@ class AuthController extends Controller
                 $email = $validated['email'];
                 $user = User::where('email', $email)->first();
 
-                if (! $user) {
+                if (!$user) {
                     return to_route('auth.forgot.password')->with('error', 'No account found with this email. Try another.');
                 }
 
@@ -553,12 +565,12 @@ class AuthController extends Controller
             } else {
                 // find user using mobile number
                 $mobile = $validated['mobile'];
-                $mobile_88 = 88 .$mobile;
+                $mobile_88 = 88 . $mobile;
                 $user = User::where('mobile', $mobile)->first();
 
-                if (! $user) {
+                if (!$user) {
                     $user = User::where('mobile', $mobile_88)->first();
-                    if (! $user) {
+                    if (!$user) {
                         return to_route('auth.forgot.password')->with('error', 'No account found with this number. Try another.');
                     }
                 }
@@ -577,10 +589,10 @@ class AuthController extends Controller
 
             // after send otp redirect to route
 
-            $ret_msg = 'তোমার <strong>'.$validated['mobile'].'</strong> নাম্বারে একটি ৪ ডিজিটের কোড পাঠানো হয়েছে । ৪ ডিজিটের কোডটি এখানে লিখো।<br>এই কোডটি দিয়ে তোমার মোবাইল নম্বরটি যাচাই করা হবে এবং পরবর্তীতে তুমি নতুন পাসওয়ার্ড সেট করতে পারবে ।';
+            $ret_msg = 'তোমার <strong>' . $validated['mobile'] . '</strong> নাম্বারে একটি ৪ ডিজিটের কোড পাঠানো হয়েছে । ৪ ডিজিটের কোডটি এখানে লিখো।<br>এই কোডটি দিয়ে তোমার মোবাইল নম্বরটি যাচাই করা হবে এবং পরবর্তীতে তুমি নতুন পাসওয়ার্ড সেট করতে পারবে ।';
 
             if ($req->email) {
-                $ret_msg = 'তোমার <strong>'.$validated['email'].'</strong> ই-মেইল এ একটি ৪ ডিজিটের কোড পাঠানো হয়েছে । ৪ ডিজিটের কোডটি এখানে লিখো।<br>এই কোডটি দিয়ে তোমার ইমেইল যাচাই করা হবে এবং পরবর্তীতে তুমি নতুন পাসওয়ার্ড সেট করতে পারবে ।';
+                $ret_msg = 'তোমার <strong>' . $validated['email'] . '</strong> ই-মেইল এ একটি ৪ ডিজিটের কোড পাঠানো হয়েছে । ৪ ডিজিটের কোডটি এখানে লিখো।<br>এই কোডটি দিয়ে তোমার ইমেইল যাচাই করা হবে এবং পরবর্তীতে তুমি নতুন পাসওয়ার্ড সেট করতে পারবে ।';
             }
 
             return to_route('load.forgot.verify.otp')->with([
@@ -588,7 +600,6 @@ class AuthController extends Controller
                 'message' => $ret_msg,
             ]);
         } catch (\Exception $e) {
-
             return to_route('auth.forgot.password')->with('error', 'An error occurred: ');
         }
     }
@@ -601,7 +612,6 @@ class AuthController extends Controller
         ]);
 
         try {
-
             $user = User::where('id', $req->user_id)->first();
 
             // return $this->isOtpValid($user, $req->otp);
@@ -635,10 +645,9 @@ class AuthController extends Controller
         }
 
         try {
-
             $user = User::where('id', $req->user_id)->first();
 
-            if (! $user) {
+            if (!$user) {
                 return to_route('auth.forgot.password')->with('error', 'No account found with this number. Try another.');
             }
 

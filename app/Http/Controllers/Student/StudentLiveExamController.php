@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,6 +46,10 @@ class StudentLiveExamController extends Controller
 
     public function loadExamNoticePage()
     {
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         $exam = DB::table('live_exams')
             ->latest('updated_at')
             ->first();
@@ -55,6 +61,10 @@ class StudentLiveExamController extends Controller
 
     public function loadExamMainPage(Request $request)
     {
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         $studentId = auth()->id();
         $examSlug = $request->query('examSlug');
 
@@ -88,7 +98,6 @@ class StudentLiveExamController extends Controller
             $questions = DB::table('questions')
                 ->select('questions.*')
                 ->get();
-
             $exists = DB::table('student_exam_attendance')
                 ->where('student_id', $studentId)
                 ->where('exam_id', $exam->id)
@@ -97,10 +106,49 @@ class StudentLiveExamController extends Controller
             if ($exists) {
                 if ($exists->student_exam_end_time < now() || $exists->submit_status !== null) {
                     return redirect()
-                        ->route('student.live.exam.list')
+                        ->route('student.live.exam.success')
                         ->withErrors(['errors' => 'You have already taken this exam.']);
                 }
+                if ($user->logged_in) {
+                    // $endTime = Carbon::parse($exists->student_exam_end_time)->setTimezone('Asia/Dhaka');
+                    // $now = Carbon::now('Asia/Dhaka');
 
+                    // $durationMinutes = max(
+                    //     0,
+                    //     round($endTime->diffInRealMinutes($now))
+                    // );
+                    // Safety: ensure valid numeric student_id
+                    $studentId = (int) $user->id;
+
+                    // Delete all related exam activity using clean conditional queries
+                    DB::table('student_exam_attendance')
+                        ->where('student_id', $studentId)
+                        ->where('exam_id', $exam->id)
+                        ->update([
+                            'total_correct_answers' => null,
+                            'total_skipped_answers' => $exam->total_questions,
+                            'student_total_mark' => null,
+                            'updated_at' => now(),
+                        ]);
+
+                    \DB::table('see_answer')
+                        ->where('student_id', $studentId)
+                        ->delete();
+
+                    // $exam->duration = $durationMinutes;
+                }
+                $endTime = Carbon::parse($exists->student_exam_end_time, 'Asia/Dhaka');
+                $now = Carbon::now('Asia/Dhaka');
+
+                // Calculate the difference in seconds first
+                $diffSeconds = $endTime->timestamp - $now->timestamp;
+
+                // Convert to full minutes, non-negative
+                $durationMinutes = max(0, intdiv($diffSeconds, 60));
+
+                // dd($endTime, $now, $durationMinutes);
+
+                $exam->duration = $durationMinutes;
                 return Inertia::render('Student/Exam/LiveExam/ExamMainPage', [
                     'exam' => $exam,
                     'questions' => $questions,
@@ -150,6 +198,10 @@ class StudentLiveExamController extends Controller
 
     public function submitExamMainPage(Request $request)
     {
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         $data = $request->validate([
             'examId' => ['required', 'integer'],
             'submit_status' => ['required', 'integer'],
@@ -181,7 +233,10 @@ class StudentLiveExamController extends Controller
 
     public function answerStore(Request $request)
     {
-        // Log::info('Request:', ['Request' => $request]);
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         $data = $request->validate([
             'exam_id' => ['required', 'integer'],
             'question_id' => ['required', 'integer'],
@@ -190,6 +245,7 @@ class StudentLiveExamController extends Controller
             'is_correct' => ['required'],
             'single_question_mark' => ['required'],
         ]);
+
         $studentId = auth()->id();
         $examId = (int) $data['exam_id'];
         $questionId = (int) $data['question_id'];
@@ -197,56 +253,68 @@ class StudentLiveExamController extends Controller
         $correctAns = $data['correct_ans'];
         $isCorrect = $data['is_correct'];
         $answerMark = $data['single_question_mark'];
+
+        // Get exam negative mark (non-blocking read)
         $exam = DB::table('live_exams')->where('id', $examId)->first();
         $negativeMark = $exam->negative_marks_value ?? 0;
 
-        // Log::debug('Exam data: ', [
-        //     'negativeMark' => $negativeMark,
-        //     'negativeMark_type' => gettype($negativeMark),
-        //     'answerMark' => $answerMark,
-        //     'answerMark_type' => gettype($answerMark),
-        // ]);
+        // Use a transaction and lock the attendance & answer rows to avoid race conditions.
+        DB::transaction(function () use (
+            $studentId, $examId, $questionId, $ansGiven, $correctAns,
+            $isCorrect, $answerMark, $negativeMark
+        ) {
+            // Lock the attendance row for update (short-lived lock)
+            $attendance = DB::table('student_exam_attendance')
+                ->where('student_id', $studentId)
+                ->where('exam_id', $examId)
+                ->lockForUpdate()
+                ->first();
 
-        $seaId = DB::table('student_exam_attendance')
-            ->where('student_id', $studentId)
-            ->where('exam_id', $examId)
-            ->value('id');
+            $seaId = $attendance->id ?? null;
 
-        $previousAnswer = DB::table('see_answer')
-            ->where('student_id', $studentId)
-            ->where('exam_id', $examId)
-            ->where('question_id', $questionId)
-            ->first();
-        // \Log::info('Prev answer:', ['panswer' => $previousAnswer]);
-        // \Log::info('Prev answer:', ['ansgiven' => $ansGiven]);
-        if ($previousAnswer && ($previousAnswer->ans_given == $ansGiven || $ansGiven == -1))
- { 
-            DB::table('see_answer')->where([
-                'student_id' => $studentId,
-                'exam_id' => $examId,
-                'question_id' => $questionId,
-            ])->delete();
-            DB::table('student_exam_attendance')
-                ->where('id', $seaId)
-                ->increment('total_skipped_answers');
-            // \Log::info('Prev is correct or not :', ['prve co0rrect ' => $previousAnswer->is_correct]);
+            // Lock the existing answer row (if any)
+            $previousAnswer = DB::table('see_answer')
+                ->where('student_id', $studentId)
+                ->where('exam_id', $examId)
+                ->where('question_id', $questionId)
+                ->lockForUpdate()
+                ->first();
 
-            if ($previousAnswer->is_correct) {
-                DB::table('student_exam_attendance')
-                    ->where('id', $seaId)
-                    ->decrement('student_total_mark', $answerMark);
+            // CASE 1: previous answer exists AND same answer given again (or ans_given == -1) -> treat as delete / skipped
+            if ($previousAnswer && ($previousAnswer->ans_given == $ansGiven || $ansGiven == -1)) {
+                DB::table('see_answer')->where([
+                    'student_id' => $studentId,
+                    'exam_id' => $examId,
+                    'question_id' => $questionId,
+                ])->delete();
 
-                DB::table('student_exam_attendance')
-                    ->where('id', $seaId)
-                    ->decrement('total_correct_answers');
-            } else {
-                DB::table('student_exam_attendance')
-                    ->where('id', $seaId)
-                    ->increment('student_total_mark', $negativeMark);
+                // Compute combined deltas so we do a single update on attendance
+                if ($previousAnswer->is_correct) {
+                    // was correct -> remove the answer mark and decrement total_correct_answers; increment skipped
+                    $markDelta = -1 * $answerMark;  // subtract answer mark
+                    $correctDelta = -1;  // decrement correct count
+                    $skippedDelta = 1;  // increment skipped
+                } else {
+                    // was wrong -> undo the negative penalty by adding negativeMark; skipped++
+                    $markDelta = $negativeMark;  // add back the penalty
+                    $correctDelta = 0;
+                    $skippedDelta = 1;
+                }
+
+                if ($seaId) {
+                    DB::table('student_exam_attendance')
+                        ->where('id', $seaId)
+                        ->update([
+                            'student_total_mark' => DB::raw("IFNULL(student_total_mark, 0) + ($markDelta)"),
+                            'total_correct_answers' => DB::raw("IFNULL(total_correct_answers, 0) + ($correctDelta)"),
+                            'total_skipped_answers' => DB::raw("IFNULL(total_skipped_answers, 0) + ($skippedDelta)")
+                        ]);
+                }
+
+                return;  // transaction callback ends -> commit
             }
 
-            return response()->json(['ok' => true]);
-        } else {
+            // ELSE: insert / update answer
             DB::table('see_answer')->updateOrInsert(
                 [
                     'student_id' => $studentId,
@@ -261,61 +329,67 @@ class StudentLiveExamController extends Controller
                 ]
             );
 
+            // If previousAnswer exists, check correctness flip
             if ($previousAnswer) {
-                $prevCorrect = $previousAnswer->is_correct === 1;
-                $newCorrect = $isCorrect == 1;
-                // \Log::info("Prev correct:", ['prevCorrect' => $prevCorrect]);
-                // \Log::info("new correct:", ['newCorrect' => $newCorrect]);
-                // \Log::info("is correct:", ['isCorrect' => $isCorrect]);
+                $prevCorrect = ((int) $previousAnswer->is_correct) === 1;
+                $newCorrect = ((int) $isCorrect) === 1;
 
                 if ($prevCorrect !== $newCorrect) {
-                    // \Log::info("Prev correct:", ['prevCorrect' => $prevCorrect]);
-
                     if ($prevCorrect) {
-                        // Was correct, now wrong: subtract mark and correct count
-                        DB::table('student_exam_attendance')
-                            ->where('id', $seaId)
-                            ->decrement('student_total_mark', $answerMark + $negativeMark);
-                        DB::table('student_exam_attendance')
-                            ->where('id', $seaId)
-                            ->decrement('total_correct_answers');
+                        // Was correct, now wrong: subtract (answerMark + negativeMark), decrement correct count
+                        $markDelta = -1 * ($answerMark + $negativeMark);
+                        $correctDelta = -1;
                     } else {
-                        // \Log::info("Prev correct:", ['prevCorrectbbbbbbbbbbbbbbbbbbbb' => $prevCorrect]);
-                        // Was wrong, now correct: add mark and correct count Undo previously deducted negative mark
+                        // Was wrong, now correct: add (answerMark + negativeMark), increment correct count
+                        $markDelta = ($answerMark + $negativeMark);
+                        $correctDelta = 1;
+                    }
+
+                    if ($seaId) {
                         DB::table('student_exam_attendance')
                             ->where('id', $seaId)
-                            ->increment('student_total_mark', $answerMark + $negativeMark);
-                        DB::table('student_exam_attendance')
-                            ->where('id', $seaId)
-                            ->increment('total_correct_answers');
+                            ->update([
+                                'student_total_mark' => DB::raw("IFNULL(student_total_mark, 0) + ($markDelta)"),
+                                'total_correct_answers' => DB::raw("IFNULL(total_correct_answers, 0) + ($correctDelta)")
+                            ]);
                     }
                 }
-            } else {
-                // First time answering this question
+
+                return;  // done for the branch where previousAnswer existed
+            }
+
+            // ELSE: first time answering this question (no previous answer)
+            // Follow original logic exactly: add answerMark when correct, subtract negative_marks_value when wrong,
+            // increment total_correct_answers if correct, and decrement total_skipped_answers by 1.
+            if ($seaId) {
+                $markExpr = $isCorrect
+                    ? "IFNULL(student_total_mark, 0) + $answerMark"
+                    : 'IFNULL(student_total_mark, 0) - IFNULL(negative_marks_value, 0)';
+
+                $correctExpr = 'IFNULL(total_correct_answers, 0) + ' . ($isCorrect ? 1 : 0);
+                $skippedExpr = 'IFNULL(total_skipped_answers, 0) - 1';
+
                 DB::table('student_exam_attendance')
-                    ->where('student_id', $studentId)
-                    ->where('exam_id', $examId)
+                    ->where('id', $seaId)
                     ->update([
-                        'student_total_mark' => DB::raw(
-                            $isCorrect
-                                ? "IFNULL(student_total_mark, 0) + $answerMark"
-                                : 'IFNULL(student_total_mark, 0) - IFNULL(negative_marks_value, 0)'
-                        ),
-                        'total_correct_answers' => DB::raw(
-                            'IFNULL(total_correct_answers, 0) + ' . ($isCorrect ? 1 : 0)
-                        ),
-                        'total_skipped_answers' => DB::raw(
-                            'IFNULL(total_skipped_answers, 0) - 1'
-                        ),
+                        'student_total_mark' => DB::raw($markExpr),
+                        'total_correct_answers' => DB::raw($correctExpr),
+                        'total_skipped_answers' => DB::raw($skippedExpr),
                     ]);
             }
 
-            return response()->json(['ok' => true]);
-        }
+            // transaction callback ends -> commit
+        });
+
+        return response()->json(['ok' => true]);
     }
 
     public function submitTabSwitchCount($exam)
     {
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         $studentId = auth()->id();
 
         DB::table('student_exam_attendance')
@@ -328,6 +402,10 @@ class StudentLiveExamController extends Controller
 
     public function deleteAllExamData()
     {
+        $user = Auth::user();
+        if ($user->logged_in == 0) {
+            return redirect()->route('force.logout');
+        }
         // Delete all records + reset AUTO_INCREMENT
         DB::table('student_exam_attendance')->truncate();
         DB::table('see_answer')->truncate();

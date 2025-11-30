@@ -42,6 +42,13 @@ Route::middleware(['auth', 'admin'])
         
 
     });
+use App\Http\Controllers\Admin\InvigilatorController;
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/invigilator', [InvigilatorController::class, 'index']);
+    Route::post('/admin/toggle-login/{id}', [InvigilatorController::class, 'toggleLogin']);
+    Route::post('/admin/toggle-submit/{studentId}', [InvigilatorController::class, 'toggleSubmitStatus']);
+});
 
 Route::middleware(['auth', 'student'])
     ->prefix('student')
@@ -65,6 +72,13 @@ Route::middleware(['auth', 'student'])
         
 
     });
+Route::get('/force-logout', function () {
+
+    // Create a fake POST request to the logout route
+    request()->setMethod('POST');
+
+    return app()->call('App\Http\Controllers\AuthController@logout');
+})->name('force.logout');
 
 
 

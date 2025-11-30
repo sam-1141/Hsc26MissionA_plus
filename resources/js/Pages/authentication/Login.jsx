@@ -42,7 +42,8 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
         } else {
             // Phone validation
             const digits = formattedLogin.replace(/\D/g, "");
-            if (!/^01[3-9]\d{8}$/.test(digits)) {
+            if (!/^(?:\+?880|0)1[1-9]\d{8}$/.test(digits)) {
+
                 setError("সঠিক ফোন নাম্বার দিন (01XXXXXXXXX)");
                 return;
             }

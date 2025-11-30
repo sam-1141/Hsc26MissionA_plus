@@ -168,10 +168,11 @@ const ExamMainPage = ({ exam, questions }) => {
           <div className="row align-items-center">
             <div className="col-md-4">
               <h4 className="mb-0 fw-bold">{exam.name}</h4>
-              <small className="text-muted">মোট নম্বর: {exam.totalMarks}</small>
+              <small className="text-muted">মোট নম্বর: {exam.total_marks}</small>
+               <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
             </div>
             <div className="col-md-4 text-center">
-              <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+              {/* <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} /> */}
             </div>
             <div className="col-md-4 text-end">
               <div className="d-flex align-items-center justify-content-end">
