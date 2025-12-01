@@ -149,7 +149,7 @@ class StudentLiveExamController extends Controller
                 // dd($endTime, $now, $durationMinutes);
 
                 $exam->duration = $durationMinutes;
-                return Inertia::render('Student/Exam/LiveExam/ExamMainPage', [
+                return Inertia::render('Student/Exam/LiveExam/ExamMainPages', [
                     'exam' => $exam,
                     'questions' => $questions,
                 ]);
@@ -177,7 +177,7 @@ class StudentLiveExamController extends Controller
             ]);
 
             if ($inserted) {
-                return Inertia::render('Student/Exam/LiveExam/ExamMainPage', [
+                return Inertia::render('Student/Exam/LiveExam/ExamMainPages', [
                     'exam' => $exam,
                     'questions' => $questions,
                 ]);
