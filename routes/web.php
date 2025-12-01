@@ -59,7 +59,7 @@ Route::middleware(['auth', 'student'])
             Route::controller(StudentLiveExamController::class)->group(function () {
             Route::get('/live-exam/list', 'loadExamListPage')->name('student.live.exam.list');
             Route::get('/exam/notice', 'loadExamNoticePage')->name('student.exam.notice');
-            Route::get('/exam', 'loadExamMainPage')->name('student.live.exam.main');
+            Route::get('/exam', 'loadExamMainPages')->name('student.live.exam.main');
             Route::post('/student/exam', 'submitExamMainPage')->name('student.live.exam.main.submit');
             Route::post('/student/{exam}/violation/rules', 'submitTabSwitchCount')->name('student.live.exam.tab.switch.count');
             Route::get('/student/live-exam/success', 'loadExamSuccessPage')->name('student.live.exam.success');
