@@ -189,7 +189,7 @@ class StudentLiveExamController extends Controller
                 ->select('questions.*')
                 ->get();
 
-             return Inertia::render('Student/Exam/LiveExam/TestPage');
+             return Inertia::render('Student/Exam/LiveExam/ExamMainPage');
         }
     }
 
