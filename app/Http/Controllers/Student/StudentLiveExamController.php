@@ -414,4 +414,10 @@ class StudentLiveExamController extends Controller
             'message' => 'All records deleted successfully.',
         ]);
     }
+
+    public function testPage()
+{
+    return Inertia::render('Student/Exam/LiveExam/TestPage');
+}
+
 }

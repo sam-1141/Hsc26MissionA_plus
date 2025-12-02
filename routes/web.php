@@ -17,6 +17,7 @@ use App\Http\Controllers\Student\StudentLiveExamController;
 
 ##############################################################################################################################################################
 
+Route::get('/test-page', [StudentLiveExamController::class, 'testPage']);
 
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
