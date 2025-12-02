@@ -3,7 +3,7 @@
 // import QuestionCard from "./QuestionCard";
 // import FocusWarning from "../../../components/FocusWarning";
 
-export default function ExamMainPageMinimal() {
+export default function ExamMainPage() {
   return (
     <div>
       <h1>Minimal Test</h1>
