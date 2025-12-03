@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { router } from "@inertiajs/react";
+import Layout from "../../layouts/Layout";
+
 
 export default function VideoSettingEdit({ setting }) {
   const [form, setForm] = useState({
@@ -172,3 +174,5 @@ export default function VideoSettingEdit({ setting }) {
     </div>
   );
 }
+
+VideoSettingEdit.layout = (page) => <Layout children={page} />;

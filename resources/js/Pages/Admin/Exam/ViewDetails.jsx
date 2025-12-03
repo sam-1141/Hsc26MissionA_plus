@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { route } from "ziggy-js";
 import QuestionList from "./QuestionList/QuiestionList";
 import QuestionModal from "../../../components/Questions/QuestionModal";
-
+import Layout from "../../../layouts/Layout"
 const ExamDetails = ({ examType, exam, questions }) => {
     const [showAddQuestionModal, setShowAddQuestionModal] = useState(false);
 
@@ -338,5 +338,5 @@ const ExamDetails = ({ examType, exam, questions }) => {
     );
 };
 
-// ExamDetails.layout = (page) => <Layout children={page} />;
+ExamDetails.layout = (page) => <Layout children={page} />;
 export default ExamDetails;

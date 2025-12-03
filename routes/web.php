@@ -46,7 +46,7 @@ Route::middleware(['auth', 'admin'])
 use App\Http\Controllers\Admin\InvigilatorController;
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/invigilator', [InvigilatorController::class, 'index']);
+    Route::get('/admin/invigilator', [InvigilatorController::class, 'index'])->name('admin.invigilator');
     Route::post('/admin/toggle-login/{id}', [InvigilatorController::class, 'toggleLogin']);
     Route::post('/admin/toggle-submit/{studentId}', [InvigilatorController::class, 'toggleSubmitStatus']);
 });
@@ -103,7 +103,7 @@ Route::middleware(['auth', 'admin'])
 
         Route::get('/video-settings', 'edit')->name('show.video.settings');
         Route::post('/video-settings', 'update')->name('store.video.settings');
-        Route::get('/dashboard', 'showStudentDashboard')->name('student.dashboard');
+        Route::get('/dashboard', 'showStudentDashboard')->name('admin.dashboard');
 
     });
 

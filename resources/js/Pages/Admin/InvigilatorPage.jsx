@@ -1,4 +1,5 @@
 import { router } from "@inertiajs/react";
+import Layout from "../../layouts/Layout";
 
 export default function InvigilatorPage({ students }) {
     // Count dashboard stats
@@ -139,3 +140,6 @@ const tdStyle = {
     border: "1px solid #ddd",
     fontSize: "14px",
 };
+
+
+InvigilatorPage.layout = (page) => <Layout children={page} />;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { router, usePage } from "@inertiajs/react";
-
+import Layout from "../../../layouts/Layout";
 export default function Create() {
     const { flash, exam } = usePage().props;
 
@@ -236,3 +236,4 @@ export default function Create() {
         </div>
     );
 }
+Create.layout = (page) => <Layout children={page} />;

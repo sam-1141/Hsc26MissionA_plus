@@ -1,6 +1,6 @@
 import React from "react";
 import { route } from "ziggy-js";
-
+import Layout from "../../layouts/Layout"
 export default function Registration_StudentDashboard({ stats, collegeWise }) {
 
     const formatDate = (ts) => {
@@ -214,3 +214,4 @@ const tr = {
 const td = {
     padding: "12px",
 };
+Registration_StudentDashboard.layout = (page) => <Layout children={page} />;
