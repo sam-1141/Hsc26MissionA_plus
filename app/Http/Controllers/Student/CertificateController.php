@@ -9,11 +9,14 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use App\Models\VideoSetting;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Auth;
 
 class CertificateController extends Controller
 {
-    public function show($mobile)
+    public function show()
 {
+    $user = Auth::user();
+    $mobile = $user->phone;
     $reg = Hsc26MapRegistration::where('mobile', $mobile)->firstOrFail();
 
     return Inertia::render('Student/Exam/LiveExam/Certificate/Certificate', [

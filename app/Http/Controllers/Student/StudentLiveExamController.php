@@ -217,9 +217,7 @@ class StudentLiveExamController extends Controller
             ->first();
         if ($exists && $exists->submit_status !== null && $user->logged_in == 1) {
             $studentName = Auth::user()->name;
-            return Inertia::render('Student/Exam/LiveExam/ExamSuccessPage', [
-                'studentName' => $studentName,
-            ]);
+            return redirect()->route('certificate.show');
         } else {
             return redirect()->route('force.logout');
         }

@@ -307,7 +307,7 @@ class AuthController extends Controller
         }
         // If user is already logged in from another device
         if ($user->logged_in == 1 && $user->role === 'student') {
-            return back()->with('error', 'You are already logged in. Please contact : +880 1813-621991 with you registered mobile no ');
+            return back()->with('error', 'You are already logged in. Please contact : +880 1813-621991 with your registered mobile no ');
         }
 
         // Otherwise mark the user as logged in

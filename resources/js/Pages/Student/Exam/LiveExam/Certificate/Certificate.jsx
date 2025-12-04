@@ -22,7 +22,13 @@ export default function Certificate({ name, college, date }) {
       // ==== Add Name ====
       pdf.setFontSize(300);
       pdf.setFont("helvetica", "italic");
-      pdf.text(name, 1900, 2900); // <-- adjust x=1500, y=2200
+
+      // Center text horizontally between x1 and x2
+      const startX = 1000;
+      const endX = 4000;
+      const textWidth = pdf.getTextWidth(name);
+      const centerX = startX + (endX - startX - textWidth) / 2;
+      pdf.text(name, centerX, 2900); // <-- name centered
 
       // ==== Add College ====
       pdf.setFontSize(150);
@@ -30,15 +36,15 @@ export default function Certificate({ name, college, date }) {
       pdf.text(college, 1900, 3300); // <-- adjust x=1500, y=2600
 
       // ==== Optional Date ====
-    //   pdf.setFontSize(100);
-    //   pdf.text(date, 1900, 3200); // adjust if needed
+      // pdf.setFontSize(100);
+      // pdf.text(date, 1900, 3200); // adjust if needed
 
       // Save PDF
       pdf.save("certificate.pdf");
 
-      // Redirect to link2
+      // Redirect to route
       setTimeout(() => {
-        window.location.href = "/link2"; // change to your link
+        window.location.href = route('student.video'); // Laravel route helper
       }, 500);
     };
   };

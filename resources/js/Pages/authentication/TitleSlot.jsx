@@ -8,40 +8,69 @@ const TitleSlot = ({
   subtitle = "",
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center bg-white py-6">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#ffffff",
+        paddingTop: "1.5rem",
+        paddingBottom: "1.5rem",
+      }}
+    >
       {/* Logo Section */}
-      <div className="mb-4 flex justify-center">
+      <div
+        style={{
+          marginBottom: "1rem",
+          display: "flex",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
         <img
           src={logoSrc}
           alt={logoAlt}
-          className="
-            w-[55vw]           /* larger on mobile */
-            max-w-[200px]      /* slightly larger cap for small devices */
-            sm:w-[45vw]
-            sm:max-w-[220px]
-            md:w-[35vw]
-            md:max-w-[240px]
-            lg:max-w-[260px]
-            object-contain
-            transition-all
-            duration-300
-          "
+          style={{
+            width: "55vw",           // mobile width approximation
+            maxWidth: "200px",
+            objectFit: "contain",
+            transition: "all 0.3s",
+          }}
         />
       </div>
 
       {/* Optional Subtitle */}
       {subtitle && (
-        <h3 className="text-lg sm:text-xl font-medium text-gray-600 mb-2 text-center">
+        <h3
+          style={{
+            fontSize: "1.125rem", // text-lg
+            fontWeight: 500,      // font-medium
+            color: "#4b5563",     // text-gray-600
+            marginBottom: "0.5rem",
+            textAlign: "center",
+          }}
+        >
           {subtitle}
         </h3>
       )}
 
       {/* Headline */}
-      <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 text-center leading-snug">
+      <h1
+        style={{
+          fontSize: "2rem",          // base text-2xl
+          fontWeight: 800,           // font-extrabold
+          color: "#111827",          // text-gray-900
+          textAlign: "center",
+          lineHeight: 1.2,           // leading-snug
+        }}
+      >
         {headline.split(",").map((part, idx) => (
           <span
             key={idx}
-            className={idx === 0 ? "text-indigo-600" : "text-indigo-500"}
+            style={{
+              color: idx === 0 ? "#4f46e5" : "#6366f1", // indigo shades
+            }}
           >
             {part.trim()}
             {idx === 0 ? "," : ""}
