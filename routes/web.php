@@ -16,6 +16,10 @@ use App\Http\Controllers\Admin\InvigilatorController;
 
 
 ##############################################################################################################################################################
+use App\Http\Controllers\Student\CertificateController;
+
+Route::get('/certificate/{mobile}', [CertificateController::class, 'show'])
+    ->name('certificate.show');
 
 Route::get('/test-page', [StudentLiveExamController::class, 'testPage']);
 
