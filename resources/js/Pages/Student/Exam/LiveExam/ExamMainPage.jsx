@@ -163,72 +163,34 @@ const ExamMainPage = ({ exam, questions }) => {
   return (
     <div className="position-relative min-vh-100 bg-light font-baloo">
       {/* Exam Header */}
-      <div className="bg-white border-bottom top-0 custom-sticky-top rounded">
-        <div className="container-fluid py-3">
-          <div className="row align-items-center">
-            <div className="col-md-4">
-              <h4 className="mb-0 fw-bold">{exam.name}</h4>
-              <small className="text-muted">মোট নম্বর: {exam.total_marks}</small>
-              {/* <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} /> */}
-            </div>
-            <div className="col-md-4 text-center">
-              {/* <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} /> */}
-            </div>
-            <div className="col-md-4 text-end">
-              {/* <div className="d-flex align-items-center justify-content-end">
-                <span className="me-3 small text-muted">
-                  উত্তর দেওয়া: {answeredCount}/{questions.length}
-                </span>
-                <button className="btn btn-success fw-semibold" onClick={() => setShowSubmitModal(true)}>
-                  জমা দিন
-                </button>
-              </div> */}
-            </div>
-          </div>
-
-          {/* Progress Bar */}
-          <div className="row mt-2">
-            <div className="col-12">
-              <div className="progress" style={{ height: "4px" }}>
-                <div className="progress-bar bg-success" style={{ width: `${progressPercentage}%` }}></div>
-              </div>
-            </div>
-<div className="min-h-screen flex items-center justify-center bg-[#f2f1e8]">
-  <div className="flex justify-between items-center gap-10 rounded-2xl shadow-lg p-8 w-full max-w-4xl bg-white/70">
-
-    {/* Left section */}
-    <div className="flex-1">
-      {/* <h4 className="mb-1 font-bold text-lg">{exam.name}</h4> */}
-      <p className="text-sm text-gray-600">মোট নম্বর: {exam.total_marks}</p>
+<div className="bg-white border-bottom top-0 custom-sticky-top rounded" style={{ position: "sticky", zIndex: 1100 }}>
+  <div className="container-fluid py-3">
+    <div className="row align-items-center">
+      <div className="col-md-4">
+        <h4 className="mb-0 fw-bold">{exam.name}</h4>
+        <small className="text-muted">মোট নম্বর: {exam.total_marks}</small>
+      </div>
+      <div className="col-md-4 text-center">
+        <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+      </div>
+      <div className="col-md-4 text-end">
+        <div className="d-flex align-items-center justify-content-end">
+          <span className="me-3 small text-muted">উত্তর দেওয়া: {answeredCount}/{questions.length}</span>
+          <button className="btn btn-success fw-semibold" onClick={() => setShowSubmitModal(true)}>জমা দিন</button>
+        </div>
+      </div>
     </div>
-
-    {/* Middle (Timer) */}
-    <div className="flex-1 flex justify-center">
-      <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+    <div className="row mt-2">
+      <div className="col-12">
+        <div className="progress" style={{ height: "4px" }}>
+          <div className="progress-bar bg-success" style={{ width: `${progressPercentage}%` }}></div>
+        </div>
+      </div>
     </div>
-
-    {/* Right section */}
-    <div className="flex-1 flex items-center justify-end">
-      <span className="mr-4 text-sm text-gray-600">
-       {answeredCount}/{questions.length}
-      </span>
-
-      <button
-        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap"
-        onClick={() => setShowSubmitModal(true)}
-      >
-        জমা দিন
-      </button>
-    </div>
-
   </div>
 </div>
 
 
-
-          </div>
-        </div>
-      </div>
 
       {/* Questions */}
       <div className=" py-4">

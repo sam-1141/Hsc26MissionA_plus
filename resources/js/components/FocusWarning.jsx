@@ -67,28 +67,40 @@ const FocusWarning = ({
       {active && (
         <div className="position-fixed top-0 start-50 translate-middle-x mt-2" style={{ zIndex: 1080, maxWidth: 520, width: '100%' }}>
           <div className={`alert mb-0 shadow-sm border-0 ${warningCount > 0 ? 'alert-danger' : 'alert-warning'}`}>
-            <div className="d-flex align-items-start">
-              <div className="me-2 fs-4">⚠️</div>
-              <div className="flex-grow-1">
-                {warningCount === 0 && (
-                  <>
-                    <strong>পরীক্ষার সতর্কতা:</strong>{' '}পরীক্ষার সময় অন্য ট্যাবে যাওয়া, মিনিমাইজ বা ফোকাস হারানো যাবে না। {maxWarnings} বার করলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হবে।
-                  </>
-                )}
-                {warningCount > 0 && warningCount < maxWarnings && (
-                  <>
-                    <strong>সতর্কবার্তা {warningCount}/{maxWarnings}:</strong>{' '}আরও {maxWarnings - warningCount} বার করলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হবে।
-                    <div className="small text-muted mt-1">কারণ: {lastWarningReason === 'tab-change' ? 'ট্যাব পরিবর্তন / মিনিমাইজ' : 'উইন্ডো ফোকাস হারানো'}</div>
-                  </>
-                )}
-                {warningCount >= maxWarnings && (
-                  <>
-                    <strong>সর্বোচ্চ সতর্কবার্তা:</strong> আপনার পরীক্ষা জমা দেওয়া হচ্ছে...
-                    <div className="small text-muted mt-1">কারণ: {lastWarningReason === 'tab-change' ? 'ট্যাব পরিবর্তন / মিনিমাইজ' : 'উইন্ডো ফোকাস হারানো'}</div>
-                  </>
-                )}
-              </div>
-            </div>
+<div
+  className="d-flex align-items-start px-3 py-1 bg-yellow-100 border rounded shadow-sm"
+  style={{
+    fontSize: "0.85rem",
+    lineHeight: "1.1rem",
+    position: "sticky",
+    top: "70px", // adjust so it appears just below header
+    zIndex: 1050, // make sure it stays above content but below header if needed
+    maxHeight: "60px",
+    overflow: "hidden",
+  }}
+>
+  <div className="me-2 fs-5">⚠️</div>
+  <div className="flex-grow-1">
+    {warningCount === 0 && (
+      <>
+        <strong>পরীক্ষার সতর্কতা:</strong> পরীক্ষার সময় অন্য ট্যাবে যাওয়া, মিনিমাইজ বা ফোকাস হারানো যাবে না। {maxWarnings} বার করলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হবে।
+      </>
+    )}
+    {warningCount > 0 && warningCount < maxWarnings && (
+      <>
+        <strong>সতর্কবার্তা {warningCount}/{maxWarnings}:</strong> আরও {maxWarnings - warningCount} বার করলে পরীক্ষা স্বয়ংক্রিয়ভাবে জমা হবে।
+        <div className="small text-muted mt-1">কারণ: {lastWarningReason === 'tab-change' ? 'ট্যাব পরিবর্তন / মিনিমাইজ' : 'উইন্ডো ফোকাস হারানো'}</div>
+      </>
+    )}
+    {warningCount >= maxWarnings && (
+      <>
+        <strong>সর্বোচ্চ সতর্কবার্তা:</strong> আপনার পরীক্ষা জমা দেওয়া হচ্ছে...
+        <div className="small text-muted mt-1">কারণ: {lastWarningReason === 'tab-change' ? 'ট্যাব পরিবর্তন / মিনিমাইজ' : 'উইন্ডো ফোকাস হারানো'}</div>
+      </>
+    )}
+  </div>
+</div>
+
           </div>
         </div>
       )}
