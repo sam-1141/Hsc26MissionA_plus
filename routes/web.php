@@ -1,25 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use App\Http\Controllers\ProgressController;
-use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\Admin\ExamInfoController;
+use App\Http\Controllers\Admin\InvigilatorController;
+use App\Http\Controllers\Admin\LiveExamController;
+use App\Http\Controllers\Student\Hsc26MapRegistrationController;
+use App\Http\Controllers\Student\StudentLiveExamController;
+use App\Http\Controllers\Student\VideoController;
 use App\Http\Controllers\AdminLectureController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Student\Hsc26MapRegistrationController;
-use App\Http\Controllers\Student\VideoController;
-use App\Http\Controllers\Admin\ExamInfoController;
-use App\Http\Controllers\Admin\LiveExamController;
+use App\Http\Controllers\CalculatorController;
+use App\Http\Controllers\ProgressController;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use \App\Http\Controllers\Admin\VideoSettingController;
-use App\Http\Controllers\Student\StudentLiveExamController;
-use App\Http\Controllers\Admin\InvigilatorController;
-
-
-##############################################################################################################################################################
 use App\Http\Controllers\Student\CertificateController;
 
-Route::get('/certificate', [CertificateController::class, 'show'])
-    ->name('certificate.show');
+// #############################################################################################################################################################
 
 Route::get('/test-page', [StudentLiveExamController::class, 'testPage']);
 
@@ -27,7 +23,6 @@ Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->controller(VideoSettingController::class)
     ->group(function () {
-
         Route::controller(LiveExamController::class)->group(function () {
             Route::post('/live-exam/store', 'store')->name('live-exams.store');
             Route::get('/live-exams/create', 'create')->name('admin.live-exams.create');
@@ -40,14 +35,11 @@ Route::middleware(['auth', 'admin'])
             Route::put('/exams/{id}/toggle-exam-type', 'toggleExamType')->name('exams.type.toggle');
             Route::get('/add-exam', 'loadAddExamPage')->name('admin.add.exam');
             Route::get('/add-exam/live-exam', 'loadAddLiveExamPage')->name('admin.add.live.exam');
-//            Route::post('/add-exam/live-exam', 'loadAddLiveExamPage')->name('admin.add.live.exam');
+            //            Route::post('/add-exam/live-exam', 'loadAddLiveExamPage')->name('admin.add.live.exam');
             Route::get('/exams', 'loadViewExamDetails')->name('admin.exam.details');
             Route::post('/live-exam/reorder-questions', 'reorderQuestions')->name('live.exam.reorder.questions');
         });
-        
-
     });
-
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/invigilator', [InvigilatorController::class, 'index'])->name('admin.invigilator');
@@ -59,71 +51,46 @@ Route::middleware(['auth', 'student'])
     ->prefix('student')
     ->controller(VideoSettingController::class)
     ->group(function () {
-
-
-            Route::controller(StudentLiveExamController::class)->group(function () {
+        Route::controller(StudentLiveExamController::class)->group(function () {
             Route::get('/live-exam/list', 'loadExamListPage')->name('student.live.exam.list');
             Route::get('/exam/notice', 'loadExamNoticePage')->name('student.exam.notice');
             Route::get('/exam/running', 'loadExamMainPage')->name('student.live.exam.main');
             Route::post('/student/exam', 'submitExamMainPage')->name('student.live.exam.main.submit');
             Route::post('/student/{exam}/violation/rules', 'submitTabSwitchCount')->name('student.live.exam.tab.switch.count');
             Route::get('/live-exam/success', 'loadExamSuccessPage')->name('student.live.exam.success');
-            Route::post('/student/exams/answers','answerStore')->name('student.exam.answer.store');
-            Route::get('/delete','deleteAllExamData')->name('student.delete.exam');
+            Route::post('/student/exams/answers', 'answerStore')->name('student.exam.answer.store');
+            Route::get('/certificate', [CertificateController::class, 'show'])
+                ->name('certificate.show');
+
+            Route::get('/delete', 'deleteAllExamData')->name('student.delete.exam');
         });
-
-
-
-        
-
     });
 Route::get('/force-logout', function () {
-
     // Create a fake POST request to the logout route
     request()->setMethod('POST');
 
     return app()->call('App\Http\Controllers\AuthController@logout');
 })->name('force.logout');
 
-
-
-
-
-
-##############################################################################################################################################################
-
-
-
-
-
-
-
+// #############################################################################################################################################################
 
 // Admin panel
 Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->controller(VideoSettingController::class)
     ->group(function () {
-
         Route::get('/video-settings', 'edit')->name('show.video.settings');
         Route::post('/video-settings', 'update')->name('store.video.settings');
         Route::get('/dashboard', 'showStudentDashboard')->name('admin.dashboard');
-
     });
-
-
-
-
 
 Route::get('/', function () {
     return redirect()->route('auth.login');
 })->name('root');
 
-
-
 Route::controller(AuthController::class)->group(function () {
-    Route::get("/HscMisssionA+/registration", "loadRegistrationForm")
-        ->name("auth.registration.form");
+    Route::get('/HscMisssionA+/registration', 'loadRegistrationForm')
+        ->name('auth.registration.form');
 
     Route::get('/login', 'loadLoginForm')
         ->name('auth.login');
@@ -135,9 +102,7 @@ Route::controller(AuthController::class)->group(function () {
         ->name('auth.logout');
 });
 
-
 Route::controller(Hsc26MapRegistrationController::class)->group(function () {
-
     Route::post('/register', 'store')
         ->name('execute.auth.hsc26mapregistration');
 
@@ -150,17 +115,10 @@ Route::controller(Hsc26MapRegistrationController::class)->group(function () {
 
 Route::get('/student/video', [VideoController::class, 'show'])->name('student.video');
 
-
 Route::get('/exam-info', [ExamInfoController::class, 'show'])->name('exam.info');
-   
-
-
-
-
 
 // 🚫 Error pages
 
 Route::get('/forbidden', function () {
     abort(403);
 })->name('error.forbidden');
-
