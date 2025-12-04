@@ -62,7 +62,7 @@ Route::middleware(['auth', 'student'])
             Route::get('/certificate', [CertificateController::class, 'show'])
                 ->name('certificate.show');
 
-            Route::get('/delete', 'deleteAllExamData')->name('student.delete.exam');
+            // Route::get('/delete', 'deleteAllExamData')->name('student.delete.exam');
         });
     });
 Route::get('/force-logout', function () {
@@ -89,8 +89,8 @@ Route::get('/', function () {
 })->name('root');
 
 Route::controller(AuthController::class)->group(function () {
-    Route::get('/HscMisssionA+/registration', 'loadRegistrationForm')
-        ->name('auth.registration.form');
+    // Route::get('/HscMisssionA+/registration', 'loadRegistrationForm')
+    //     ->name('auth.registration.form');
 
     Route::get('/login', 'loadLoginForm')
         ->name('auth.login');
@@ -102,16 +102,16 @@ Route::controller(AuthController::class)->group(function () {
         ->name('auth.logout');
 });
 
-Route::controller(Hsc26MapRegistrationController::class)->group(function () {
-    Route::post('/register', 'store')
-        ->name('execute.auth.hsc26mapregistration');
+// Route::controller(Hsc26MapRegistrationController::class)->group(function () {
+//     Route::post('/register', 'store')
+//         ->name('execute.auth.hsc26mapregistration');
 
-    Route::get('/registration-success', 'showSuccess')
-        ->name('registration.success');
+//     Route::get('/registration-success', 'showSuccess')
+//         ->name('registration.success');
 
-    Route::get('/admit-card', 'admitCard')
-        ->name('admit.card');
-});
+//     Route::get('/admit-card', 'admitCard')
+//         ->name('admit.card');
+// });
 
 Route::get('/student/video', [VideoController::class, 'show'])->name('student.video');
 
