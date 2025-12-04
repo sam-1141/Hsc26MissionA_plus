@@ -11,7 +11,7 @@ const QuestionList = ({
     onQuestionAdded,
     onQuestionUpdated,
 }) => {
-    console.log("here from questionlist"+ examId);
+    // console.log("here from questionlist"+ examId);
     const [expandedQuestion, setExpandedQuestion] = useState(null);
     const [questions, setQuestions] = useState(initialQuestions);
     const [showReorderModal, setShowReorderModal] = useState(false);
@@ -30,8 +30,8 @@ const QuestionList = ({
                 questions: reorderedQuestions
             });
 
-            // console.log('response', response);
-            console.log(examId+"from qustionlist");
+            // // console.log('response', response);
+            // console.log(examId+"from qustionlist");
             alert("Order saved successfully!");
         } catch (error) {
             alert("Failed to save order");
@@ -248,7 +248,7 @@ const QuestionList = ({
                                     <h4 className="font-medium mb-2">
                                         Options:
                                     </h4>
-                                    alert(options)
+                                
                                     <ul className="list-group">
                                         {options.map((option, index) => (
                                             <li

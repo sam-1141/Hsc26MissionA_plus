@@ -85,7 +85,7 @@ class AuthController extends Controller
             $user = Auth::user();
 
             if ($user->role === 'admin') {
-                return to_route('student.dashboard');
+                return to_route('admin.dashboard');
             }
             if ($user->role === 'student') {
                 return to_route('student.exam.notice');
@@ -321,7 +321,7 @@ class AuthController extends Controller
         $cookie = cookie(
             'ft_roar',
             $user->id,
-            60,
+            60 * 24 * 7,
             '/',
             null,
             false,
@@ -332,7 +332,7 @@ class AuthController extends Controller
 
         // redirect based on role
         if ($user->role === 'admin') {
-            return redirect()->route('show.video.settings')->withCookie($cookie);
+            return redirect()->route('admin.dashboard')->withCookie($cookie);
         }
 
         // if ($user->role === 'student') {

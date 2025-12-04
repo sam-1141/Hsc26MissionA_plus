@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\ExamInfoController;
 use App\Http\Controllers\Admin\LiveExamController;
 use \App\Http\Controllers\Admin\VideoSettingController;
 use App\Http\Controllers\Student\StudentLiveExamController;
-
+use App\Http\Controllers\Admin\InvigilatorController;
 
 
 ##############################################################################################################################################################
@@ -43,7 +43,7 @@ Route::middleware(['auth', 'admin'])
         
 
     });
-use App\Http\Controllers\Admin\InvigilatorController;
+
 
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/invigilator', [InvigilatorController::class, 'index'])->name('admin.invigilator');

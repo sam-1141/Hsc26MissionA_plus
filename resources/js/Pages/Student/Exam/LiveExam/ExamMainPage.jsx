@@ -1,5 +1,5 @@
 // ExamMainPage.jsx
-import {useState, useEffect, useRef} from "react"
+import { useState, useEffect, useRef } from "react"
 import ExamTimer from "./ExamTimer"
 import QuestionCard from "./QuestionCard"
 // import Layout from "../../../../layouts/Layout"
@@ -7,36 +7,36 @@ import FocusWarning from "../../../../components/FocusWarning"
 import { route } from "ziggy-js";
 
 const ExamMainPage = ({ exam, questions }) => {
-    const beforeUnloadRef = useRef(null);
-    const popStateRef = useRef(null);
+  const beforeUnloadRef = useRef(null);
+  const popStateRef = useRef(null);
   const [answers, setAnswers] = useState({})
   const [showSubmitModal, setShowSubmitModal] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
 
 
-    useEffect(() => {
-        beforeUnloadRef.current = (e) => {
-            e.preventDefault();
-            e.returnValue = "";
-        };
+  useEffect(() => {
+    beforeUnloadRef.current = (e) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
 
-        popStateRef.current = (e) => {
-            e.preventDefault();
-            window.history.pushState(null, "", window.location.href);
-        };
+    popStateRef.current = (e) => {
+      e.preventDefault();
+      window.history.pushState(null, "", window.location.href);
+    };
 
-        window.addEventListener("beforeunload", beforeUnloadRef.current);
-        window.addEventListener("popstate", popStateRef.current);
-        window.history.pushState(null, "", window.location.href);
+    window.addEventListener("beforeunload", beforeUnloadRef.current);
+    window.addEventListener("popstate", popStateRef.current);
+    window.history.pushState(null, "", window.location.href);
 
-        return () => {
-            window.removeEventListener("beforeunload", beforeUnloadRef.current);
-            window.removeEventListener("popstate", popStateRef.current);
-        };
-    }, []);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnloadRef.current);
+      window.removeEventListener("popstate", popStateRef.current);
+    };
+  }, []);
 
 
-    const handleAnswerSelect = async (questionId, answerIndex) => {
+  const handleAnswerSelect = async (questionId, answerIndex) => {
     // Calculate the additional data points
     const question = questions.find(q => q.id === questionId);
     let parsedOptions = [];
@@ -51,7 +51,7 @@ const ExamMainPage = ({ exam, questions }) => {
       .filter(idx => idx !== -1);
 
     // Calculate per question mark
-      const singleQuestionMark = exam.total_marks / exam.total_questions;
+    const singleQuestionMark = exam.total_marks / exam.total_questions;
 
     // ---- NEW: support multi-select and toggle behavior ----
     // currentSelections is normalized array of selected indices for this question
@@ -70,7 +70,7 @@ const ExamMainPage = ({ exam, questions }) => {
       }
 
       // sort for consistent ordering (helps equality checks)
-      newSelected = newSelected.sort((a,b) => a - b);
+      newSelected = newSelected.sort((a, b) => a - b);
 
       // Determine correctness: true if selected set equals correctAnswers set
       const isCorrect = (newSelected.length === correctAnswers.length)
@@ -110,8 +110,8 @@ const ExamMainPage = ({ exam, questions }) => {
   };
 
   const handleSubmitByStudent = async (submitStatus) => {
-      window.removeEventListener("beforeunload", beforeUnloadRef.current);
-      window.removeEventListener("popstate", popStateRef.current);
+    window.removeEventListener("beforeunload", beforeUnloadRef.current);
+    window.removeEventListener("popstate", popStateRef.current);
     try {
       const response = await axios.post(route('student.live.exam.main.submit'), {
         examId: exam.id,
@@ -119,7 +119,7 @@ const ExamMainPage = ({ exam, questions }) => {
       });
 
       if (response.data.type === 'success') {
-          window.location.href = route('student.live.exam.success');
+        window.location.href = route('student.live.exam.success');
       }
 
     } catch (error) {
@@ -131,20 +131,20 @@ const ExamMainPage = ({ exam, questions }) => {
   }
 
   const handleSubmit = async (isAuto = false) => {
-      window.removeEventListener("beforeunload", beforeUnloadRef.current);
-      window.removeEventListener("popstate", popStateRef.current);
+    window.removeEventListener("beforeunload", beforeUnloadRef.current);
+    window.removeEventListener("popstate", popStateRef.current);
     if (typeof isAuto !== 'boolean') {
       isAuto = false
     }
     if (!exam) return
-      const response = await axios.post(route('student.live.exam.main.submit'), {
-          examId: exam.id,
-          submit_status: 3,
-      });
+    const response = await axios.post(route('student.live.exam.main.submit'), {
+      examId: exam.id,
+      submit_status: 3,
+    });
 
-      if (response.data.type === 'success') {
-          window.location.href = route('student.live.exam.success');
-      }
+    if (response.data.type === 'success') {
+      window.location.href = route('student.live.exam.success');
+    }
   }
 
   if (!exam) {
@@ -169,20 +169,20 @@ const ExamMainPage = ({ exam, questions }) => {
             <div className="col-md-4">
               <h4 className="mb-0 fw-bold">{exam.name}</h4>
               <small className="text-muted">মোট নম্বর: {exam.total_marks}</small>
-               <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+              {/* <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} /> */}
             </div>
             <div className="col-md-4 text-center">
               {/* <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} /> */}
             </div>
             <div className="col-md-4 text-end">
-              <div className="d-flex align-items-center justify-content-end">
+              {/* <div className="d-flex align-items-center justify-content-end">
                 <span className="me-3 small text-muted">
                   উত্তর দেওয়া: {answeredCount}/{questions.length}
                 </span>
                 <button className="btn btn-success fw-semibold" onClick={() => setShowSubmitModal(true)}>
                   জমা দিন
                 </button>
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -193,6 +193,39 @@ const ExamMainPage = ({ exam, questions }) => {
                 <div className="progress-bar bg-success" style={{ width: `${progressPercentage}%` }}></div>
               </div>
             </div>
+<div className="min-h-screen flex items-center justify-center bg-[#f2f1e8]">
+  <div className="flex justify-between items-center gap-10 rounded-2xl shadow-lg p-8 w-full max-w-4xl bg-white/70">
+
+    {/* Left section */}
+    <div className="flex-1">
+      {/* <h4 className="mb-1 font-bold text-lg">{exam.name}</h4> */}
+      <p className="text-sm text-gray-600">মোট নম্বর: {exam.total_marks}</p>
+    </div>
+
+    {/* Middle (Timer) */}
+    <div className="flex-1 flex justify-center">
+      <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+    </div>
+
+    {/* Right section */}
+    <div className="flex-1 flex items-center justify-end">
+      <span className="mr-4 text-sm text-gray-600">
+       {answeredCount}/{questions.length}
+      </span>
+
+      <button
+        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap"
+        onClick={() => setShowSubmitModal(true)}
+      >
+        জমা দিন
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+
           </div>
         </div>
       </div>
@@ -213,6 +246,15 @@ const ExamMainPage = ({ exam, questions }) => {
             ))}
           </div>
         </div>
+<div className="w-full flex justify-center items-center mt-6">
+  <button
+    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap shadow-md transition"
+    onClick={() => setShowSubmitModal(true)}
+  >
+    জমা দিন
+  </button>
+</div>
+
       </div>
 
       {/* Submit Confirmation Modal */}
