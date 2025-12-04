@@ -69,7 +69,37 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                 <div className="login-form">
                     <div className="border border-primary p-4 rounded shadow">
                         <form onSubmit={handleSubmit}>
-                            <h2>লগ ইন করো</h2>
+<div style={{ textAlign: "center", marginBottom: "28px" }}>
+  <h2
+    style={{
+      fontFamily: "'Poppins', 'Segoe UI', Roboto, sans-serif",
+      fontSize: "28px",
+      fontWeight: 700,
+      color: "#1f2937",
+      letterSpacing: "0.3px",
+      marginBottom: "8px",
+    }}
+  >
+    <span style={{ color: "#1f2937" }}>HSC 26</span>{" "}
+    <span style={{ color: "#2563eb" }}>MISSION A+</span>{" "}
+    <span style={{ color: "#374151" }}>EXAM এ অংশগ্রহণের জন্য</span>{" "}
+    <span style={{ color: "#2563eb" }}>লগ ইন করো</span>
+  </h2>
+
+  <p
+    style={{
+      fontFamily: "'Poppins', 'Segoe UI', Roboto, sans-serif",
+      fontSize: "18px",
+      fontWeight: 600,
+      color: "#db2777",       // noticeable pink-red
+      marginTop: "6px",
+    }}
+  >
+    ⭐ পরীক্ষাটি আজ সন্ধ্যা ৬টা থেকে ৯টার মধ্যে যে কোনো সময় দেওয়া যাবে।
+  </p>
+</div>
+
+
 
                             <label>
                                 ফোন নাম্বার বা ইমেইল
@@ -87,14 +117,14 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
                             )}
 
                             <label>
-                                পাসওয়ার্ড
+                                রেজিস্ট্রেশন নং
                                 <span className="text-danger"> *</span>
                             </label>
                             <div style={{ position: "relative" }}>
                                 <input
                                     type={showPassword ? "text" : "password"}
                                     name="password"
-                                    placeholder="তোমার পাসওয়ার্ড"
+                                    placeholder="FT_XXXXXX"
                                     value={values.password}
                                     onChange={handleChange}
                                     style={{ paddingRight: "2.5rem" }}

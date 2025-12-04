@@ -112,7 +112,7 @@ Route::middleware(['auth', 'admin'])
 
 
 Route::get('/', function () {
-    return redirect()->route('auth.registration.form');
+    return redirect()->route('auth.login');
 })->name('root');
 
 
