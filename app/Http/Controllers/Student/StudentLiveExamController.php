@@ -66,41 +66,25 @@ class StudentLiveExamController extends Controller
             return redirect()->route('force.logout');
         }
         $studentId = auth()->id();
-        $examSlug = $request->query('examSlug');
 
         $exam = DB::table('live_exams')->latest()->first();
 
         // dump($exam);
         if (!$exam) {
-            return redirect()->route('student.live.exam.list')->withErrors(['errors' => 'Exam not found.']);
+            return redirect()->route('student.exam.notice')->withErrors(['errors' => 'Exam not found.']);
+        }
+        if ($exam->start_time > now()) {
+            return redirect()->route('student.exam.notice')->withErrors(['errors' => 'Exam not started yet.']);
         }
 
         if ($exam->end_time > now()) {
-            // if($exam->by_link == 0 && $exam->for_all_student == 0){
-            //     $courseIds = DB::table('course_exam')
-            //         ->where('exam_id', $exam->id)
-            //         ->pluck('course_id')
-            //         ->unique()
-            //         ->values()
-            //         ->all();
-
-            //     $permittedCourse = DB::connection('Webapp')
-            //         ->table('course_student')
-            //         ->where('student_id', $studentId)
-            //         ->whereIn('course_id', $courseIds)
-            //         ->exists();
-
-            //     if (!$permittedCourse) {
-            //         return redirect()->route('student.live.exam.list')->withErrors(['errors' => 'You are not permitted to take this exam.']);
-            //     }
-            // }
-
             $questions = DB::table('questions')
                 ->select('questions.*')
                 ->get();
             $exists = DB::table('student_exam_attendance')
                 ->where('student_id', $studentId)
                 ->where('exam_id', $exam->id)
+                ->latest('updated_at')
                 ->first();
 
             if ($exists) {
@@ -110,14 +94,6 @@ class StudentLiveExamController extends Controller
                         ->withErrors(['errors' => 'You have already taken this exam.']);
                 }
                 if ($user->logged_in) {
-                    // $endTime = Carbon::parse($exists->student_exam_end_time)->setTimezone('Asia/Dhaka');
-                    // $now = Carbon::now('Asia/Dhaka');
-
-                    // $durationMinutes = max(
-                    //     0,
-                    //     round($endTime->diffInRealMinutes($now))
-                    // );
-                    // Safety: ensure valid numeric student_id
                     $studentId = (int) $user->id;
 
                     // Delete all related exam activity using clean conditional queries
@@ -136,6 +112,8 @@ class StudentLiveExamController extends Controller
                         ->delete();
 
                     // $exam->duration = $durationMinutes;
+                } else {
+                    return redirect()->route('force.logout');
                 }
                 $endTime = Carbon::parse($exists->student_exam_end_time, 'Asia/Dhaka');
                 $now = Carbon::now('Asia/Dhaka');
@@ -182,17 +160,10 @@ class StudentLiveExamController extends Controller
                     'questions' => $questions,
                 ]);
             } else {
-                return redirect()->route('student.live.exam.list')->withErrors(['errors' => 'Failed to start the exam.']);
+                return redirect()->route('force.logout');
             }
         } else {
-            $questions = DB::table('questions')
-                ->select('questions.*')
-                ->get();
-
-            return Inertia::render('Student/Exam/PracticeExam/PracticeExamPage', [
-                'exam' => $exam,
-                'questions' => $questions,
-            ]);
+            return redirect()->route('force.logout')->withErrors(['errors' => 'You have already taken this exam.']);
         }
     }
 
@@ -208,27 +179,50 @@ class StudentLiveExamController extends Controller
         ]);
 
         $studentId = auth()->user()->id;
+        $exam = DB::table('live_exams')->latest()->first();
 
-        DB::table('student_exam_attendance')
+        $exists = DB::table('student_exam_attendance')
             ->where('student_id', $studentId)
-            ->where('exam_id', $request->examId)
-            ->update([
-                'submit_time' => now(),
-                'submit_status' => $data['submit_status'],
-            ]);
+            ->where('exam_id', $exam->id)
+            ->latest('updated_at')
+            ->first();
+        if ($exists && $exists->submit_status == null && $user->logged_in == 1) {
+            DB::table('student_exam_attendance')
+                ->where('student_id', $studentId)
+                ->where('exam_id', $request->examId)
+                ->update([
+                    'submit_time' => now(),
+                    'submit_status' => $data['submit_status'],
+                ]);
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'Exam updated successfully.'
-        ]);
+            return response()->json([
+                'type' => 'success',
+                'message' => 'Exam updated successfully.'
+            ]);
+        } else {
+            return redirect()->route('force.logout');
+        }
     }
 
     public function loadExamSuccessPage()
     {
-        $studentName = Auth::user()->name;
-        return Inertia::render('Student/Exam/LiveExam/ExamSuccessPage', [
-            'studentName' => $studentName,
-        ]);
+        $user = Auth::user();
+        $studentId = auth()->user()->id;
+        $exam = DB::table('live_exams')->latest()->first();
+
+        $exists = DB::table('student_exam_attendance')
+            ->where('student_id', $studentId)
+            ->where('exam_id', $exam->id)
+            ->latest('updated_at')
+            ->first();
+        if ($exists && $exists->submit_status !== null && $user->logged_in == 1) {
+            $studentName = Auth::user()->name;
+            return Inertia::render('Student/Exam/LiveExam/ExamSuccessPage', [
+                'studentName' => $studentName,
+            ]);
+        } else {
+            return redirect()->route('force.logout');
+        }
     }
 
     public function answerStore(Request $request)
@@ -416,8 +410,7 @@ class StudentLiveExamController extends Controller
     }
 
     public function testPage()
-{
-    return Inertia::render('Student/Exam/LiveExam/TestPage');
-}
-
+    {
+        return Inertia::render('Student/Exam/LiveExam/TestPage');
+    }
 }

@@ -63,7 +63,7 @@ Route::middleware(['auth', 'student'])
             Route::get('/exam/running', 'loadExamMainPage')->name('student.live.exam.main');
             Route::post('/student/exam', 'submitExamMainPage')->name('student.live.exam.main.submit');
             Route::post('/student/{exam}/violation/rules', 'submitTabSwitchCount')->name('student.live.exam.tab.switch.count');
-            Route::get('/student/live-exam/success', 'loadExamSuccessPage')->name('student.live.exam.success');
+            Route::get('/live-exam/success', 'loadExamSuccessPage')->name('student.live.exam.success');
             Route::post('/student/exams/answers','answerStore')->name('student.exam.answer.store');
             Route::get('/delete','deleteAllExamData')->name('student.delete.exam');
         });
