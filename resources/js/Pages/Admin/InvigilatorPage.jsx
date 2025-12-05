@@ -2,6 +2,11 @@ import { router } from "@inertiajs/react";
 import Layout from "../../layouts/Layout";
 
 export default function InvigilatorPage({ students }) {
+    // Sort: submitted (not null) on top, others below
+    const sortedStudents = [...students].sort(
+        (a, b) => (b.submit_status !== null) - (a.submit_status !== null)
+    );
+
     // Count dashboard stats
     const totalLoggedIn = students.filter((s) => s.logged_in === 1).length;
     const totalSubmitted = students.filter((s) => s.submit_status === 1).length;
@@ -77,7 +82,7 @@ export default function InvigilatorPage({ students }) {
                 </thead>
 
                 <tbody>
-                    {students.map((s) => (
+                    {sortedStudents.map((s) => (
                         <tr key={s.id} style={{ textAlign: "center" }}>
                             <td style={tdStyle}>{s.id}</td>
                             <td style={tdStyle}>{s.name}</td>
@@ -102,11 +107,11 @@ export default function InvigilatorPage({ students }) {
                                 </button>
                             </td>
 
-                            {/* Toggle Submit */}
+                            {/* Submit Status (not clickable) */}
                             <td style={tdStyle}>
-                                <button
-                                    onClick={() => toggleSubmit(s.id)}
+                                <div
                                     style={{
+                                        display: "inline-block",
                                         padding: "6px 14px",
                                         borderRadius: "6px",
                                         color: "white",
@@ -114,10 +119,11 @@ export default function InvigilatorPage({ students }) {
                                         background: s.submit_status ? "#0ea5e9" : "#6b7280",
                                         cursor: "pointer",
                                         border: "none",
+                                        userSelect: "none",
                                     }}
                                 >
                                     {s.submit_status ? "SUBMITTED" : "NOT SUBMITTED"}
-                                </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
@@ -127,7 +133,7 @@ export default function InvigilatorPage({ students }) {
     );
 }
 
-// Reusable table styles
+// Table styles
 const thStyle = {
     padding: "10px",
     border: "1px solid #ddd",
@@ -140,6 +146,5 @@ const tdStyle = {
     border: "1px solid #ddd",
     fontSize: "14px",
 };
-
 
 InvigilatorPage.layout = (page) => <Layout children={page} />;

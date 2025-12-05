@@ -392,20 +392,20 @@ class StudentLiveExamController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    public function deleteAllExamData()
-    {
-        $user = Auth::user();
-        if ($user->logged_in == 0) {
-            return redirect()->route('force.logout');
-        }
-        // Delete all records + reset AUTO_INCREMENT
-        DB::table('student_exam_attendance')->truncate();
-        DB::table('see_answer')->truncate();
+    // public function deleteAllExamData()
+    // {
+    //     $user = Auth::user();
+    //     if ($user->logged_in == 0) {
+    //         return redirect()->route('force.logout');
+    //     }
+    //     // Delete all records + reset AUTO_INCREMENT
+    //     DB::table('student_exam_attendance')->truncate();
+    //     DB::table('see_answer')->truncate();
 
-        return response()->json([
-            'message' => 'All records deleted successfully.',
-        ]);
-    }
+    //     return response()->json([
+    //         'message' => 'All records deleted successfully.',
+    //     ]);
+    // }
 
     public function testPage()
     {
