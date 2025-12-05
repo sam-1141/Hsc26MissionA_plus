@@ -3,9 +3,15 @@ import Layout from "../../layouts/Layout";
 
 export default function InvigilatorPage({ students }) {
     // Sort: submitted (not null) on top, others below
-    const sortedStudents = [...students].sort(
-        (a, b) => (b.submit_status !== null) - (a.submit_status !== null)
-    );
+    const sortedStudents = [...students].sort((a, b) => {
+        const score = (s) => {
+            if (s.logged_in === 1 && s.submit_status !== null) return 2;
+            if (s.logged_in === 1) return 1;
+            return 0;
+        };
+        return score(b) - score(a);
+    });
+
 
     // Count dashboard stats
     const totalLoggedIn = students.filter((s) => s.logged_in === 1).length;

@@ -73,16 +73,16 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
   <h2
     style={{
       fontFamily: "'Poppins', 'Segoe UI', Roboto, sans-serif",
-      fontSize: "28px",
-      fontWeight: 700,
+      fontSize: "23px",
+      fontWeight: 450,
       color: "#1f2937",
       letterSpacing: "0.3px",
       marginBottom: "8px",
     }}
   >
     <span style={{ color: "#1f2937" }}>HSC 26</span>{" "}
-    <span style={{ color: "#2563eb" }}>MISSION A+</span>{" "}
-    <span style={{ color: "#374151" }}>EXAM এ অংশগ্রহণের জন্য</span>{" "}
+    <span style={{ color: "#5f9126ff" }}>MISSION A+ Championship</span>{" "}
+    <span style={{ color: "#717e92ff" }}>EXAM এ অংশগ্রহণের জন্য</span>{" "}
     <span style={{ color: "#2563eb" }}>লগ ইন করো</span>
   </h2>
 
@@ -95,7 +95,7 @@ const Login = ({ flash, errors, core_app_registration_url }) => {
       marginTop: "6px",
     }}
   >
-    ⭐ পরীক্ষাটি আজ সন্ধ্যা ৬টা থেকে ৯টার মধ্যে যে কোনো সময় দেওয়া যাবে।
+    ⭐ পরীক্ষাটি আজ সন্ধ্যা ৬টা থেকে রাত ১০ টার মধ্যে যে কোনো সময় দেওয়া যাবে।
   </p>
 </div>
 

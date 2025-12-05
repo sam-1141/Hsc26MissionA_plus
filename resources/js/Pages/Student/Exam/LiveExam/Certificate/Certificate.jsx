@@ -21,7 +21,8 @@ export default function Certificate({ name, college, date }) {
 
       // ==== Add Name ====
       pdf.setFontSize(300);
-      pdf.setFont("helvetica", "italic");
+      pdf.setFont("times", "italic");
+      pdf.setTextColor(30, 30, 30);   // premium dark grey
 
       // Center text horizontally between x1 and x2
       const startX = 1000;
