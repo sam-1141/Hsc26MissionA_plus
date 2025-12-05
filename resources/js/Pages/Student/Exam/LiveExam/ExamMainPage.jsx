@@ -163,32 +163,49 @@ const ExamMainPage = ({ exam, questions }) => {
   return (
     <div className="position-relative min-vh-100 bg-light font-baloo">
       {/* Exam Header */}
-<div className="bg-white border-bottom top-0 custom-sticky-top rounded" style={{ position: "sticky", zIndex: 1100 }}>
-  <div className="container-fluid py-3">
-    <div className="row align-items-center">
-      <div className="col-md-4">
-        <h4 className="mb-0 fw-bold">{exam.name}</h4>
-        <small className="text-muted">মোট নম্বর: {exam.total_marks}</small>
-      </div>
-      <div className="col-md-4 text-center">
-        <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
-      </div>
-      <div className="col-md-4 text-end">
-        <div className="d-flex align-items-center justify-content-end">
-          <span className="me-3 small text-muted">উত্তর দেওয়া: {answeredCount}/{questions.length}</span>
-          <button className="btn btn-success fw-semibold" onClick={() => setShowSubmitModal(true)}>জমা দিন</button>
+      <div className="bg-white border-bottom top-0 custom-sticky-top rounded" style={{ position: "sticky", zIndex: 1100 }}>
+        <div className="container-fluid py-3">
+          <div className="row align-items-center">
+            {/* Exam Info */}
+            <div className="col-md-4 d-flex flex-column justify-content-center">
+              <h4 className="mb-1 fw-bold" style={{ lineHeight: "1.2" }}>{exam.name}</h4>
+              <small className="text-muted" style={{ fontSize: "0.875rem" }}>মোট নম্বর: {exam.total_marks}</small>
+            </div>
+
+
+            {/* Timer */}
+            <div className="col-md-4 d-flex justify-content-center">
+              <ExamTimer duration={exam.duration} onTimeUp={handleSubmitByStudent} />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="col-md-4 d-flex justify-content-end align-items-center">
+              {/* <span className="me-3 small text-muted" style={{ fontSize: "0.875rem" }}>
+      উত্তর দেওয়া: {answeredCount}/{questions.length}
+    </span> */}
+              <button
+                className="btn btn-success fw-semibold"
+                style={{ padding: "6px 16px", fontSize: "0.875rem" }}
+                onClick={() => setShowSubmitModal(true)}
+              >
+                জমা দিন
+              </button>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="row mt-3">
+            <div className="col-12">
+              <div className="progress" style={{ height: "5px", borderRadius: "4px" }}>
+                <div className="progress-bar bg-success" style={{ width: `${progressPercentage}%`, transition: "width 0.4s ease" }}></div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
-    </div>
-    <div className="row mt-2">
-      <div className="col-12">
-        <div className="progress" style={{ height: "4px" }}>
-          <div className="progress-bar bg-success" style={{ width: `${progressPercentage}%` }}></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+
 
 
 
@@ -208,14 +225,14 @@ const ExamMainPage = ({ exam, questions }) => {
             ))}
           </div>
         </div>
-<div className="w-full flex justify-center items-center mt-6">
-  <button
-    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap shadow-md transition"
-    onClick={() => setShowSubmitModal(true)}
-  >
-    জমা দিন
-  </button>
-</div>
+        <div className="w-full flex justify-center items-center mt-6">
+          <button
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold whitespace-nowrap shadow-md transition"
+            onClick={() => setShowSubmitModal(true)}
+          >
+            জমা দিন
+          </button>
+        </div>
 
       </div>
 
